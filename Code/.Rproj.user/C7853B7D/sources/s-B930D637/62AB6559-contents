@@ -1,0 +1,194 @@
+####################################### Tests analyse question ouverte inflation ##############################################
+
+### Analyse textuelle des open questions (omnibus et Datagotchi pilot 1 & 2) avec le code adapté de Nadjim et dictionnaire Hublot issues et subcategories   #####                                                      #
+
+
+
+#### 0.1 - Libraries ####
+
+library(tm)
+#library(stm)     # À évaluer avec des variables nettoyées 
+library(haven)    
+library(readxl)   
+library(crayon)   
+library(textcat)  # À raffiner
+library(foreign)
+library(quanteda)
+library(tidytext)
+library(tidyverse)
+library(seededlda)
+
+#### 0.2 - Data ####
+
+Data1 <- haven::read_sav("/Users/axeldery/Dropbox/RECHERCHE/CLESSN/Élections provinciale 2022/histoire-inflation/Datagotchi-data/ULA12-BASE-1500.sav") # Datagotchi pilote 1
+Data2 <- read.csv("/Users/axeldery/Dropbox/RECHERCHE/CLESSN/Élections provinciale 2022/histoire-inflation/Datagotchi-data/Pilote2-Raw.csv")  # Datagotchi pilote 2
+Data3 <- read_xlsx("/Users/axeldery/Dropbox/RECHERCHE/CLESSN/Élections provinciale 2022/histoire-inflation/omnibus-data/OMN01.xlsx", 3)  # omnibus Janvier; O_C7
+Data4 <- read_xlsx("/Users/axeldery/Dropbox/RECHERCHE/CLESSN/Élections provinciale 2022/histoire-inflation/omnibus-data/omn02-open.xlsx") # fevrier; O_C7
+Data5 <- read_xlsx("/Users/axeldery/Dropbox/RECHERCHE/CLESSN/Élections provinciale 2022/histoire-inflation/omnibus-data/OMN03-OPEN.xlsx") # mars; O_C6
+Data6 <- read_xlsx("/Users/axeldery/Dropbox/RECHERCHE/CLESSN/Élections provinciale 2022/histoire-inflation/omnibus-data/OMN04-05-06-OPEN.xlsx", 1) # avril O_C6
+Data7 <- read_xlsx("/Users/axeldery/Dropbox/RECHERCHE/CLESSN/Élections provinciale 2022/histoire-inflation/omnibus-data/OMN04-05-06-OPEN.xlsx", 2) # mai O_C6
+Data8 <- read_xlsx("/Users/axeldery/Dropbox/RECHERCHE/CLESSN/Élections provinciale 2022/histoire-inflation/omnibus-data/OMN04-05-06-OPEN.xlsx", 3) # juin O_C6
+
+
+
+# Merging tous les most important issues ensemble 
+Data1 <- Data1 %>% select(openQ = Q83O)
+Data2 <- Data2 %>% select(openQ = FR_openFutur)
+Data3 <- Data3 %>% select(openQ = O_C7)
+Data4 <- Data4 %>% select(openQ = O_C7)
+Data5 <- Data5 %>% select(openQ = O_C6)
+Data6 <- Data6 %>% select(openQ = O_C6)
+Data7 <- Data7 %>% select(openQ = O_C6)
+Data8 <- Data8 %>% select(openQ = O_C6)
+
+         
+DataMerged <- rbind(Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8)
+
+
+# get dictionnaire hublot : celui ci est le dictionnaire issues
+credentials <- hublot::get_credentials(
+  Sys.getenv("HUB3_URL"), 
+  Sys.getenv("HUB3_USERNAME"), 
+  Sys.getenv("HUB3_PASSWORD"))
+
+
+issues_dict <- clessnverse::get_dictionary('issues', c("en","fr"), credentials) # changer le dictionnaire ici -> subcategories ou issues
+# subCat_dict <- clessnverse::get_dictionary('subcategories', c("en","fr"), credentials) # changer le dictionnaire ici -> subcategories ou issues
+
+# changer le nom des labels dans le dictionnaire
+
+
+# définition de la fonction qui calcule le nombre de mots
+#compute_relevance_score <- function(txt_bloc, dictionary) {
+#  # Prepare corpus
+#  txt <- stringr::str_replace_all(string = txt_bloc, pattern = "M\\.|Mr\\.|Dr\\.", replacement = "")
+#  tokens <- quanteda::tokens(txt, remove_punct = TRUE)
+#  tokens <- quanteda::tokens_remove(tokens, quanteda::stopwords("french"))
+#  tokens <- quanteda::tokens_remove(tokens, quanteda::stopwords("spanish"))
+#  tokens <- quanteda::tokens_remove(tokens, quanteda::stopwords("english"))
+#  
+#  tokens <- quanteda::tokens_replace(
+#    tokens,
+#    quanteda::types(tokens),
+#    stringi::stri_replace_all_regex(quanteda::types(tokens), "[lsd]['\\p{Pf}]", ""))
+#  
+#  if (length(tokens[[1]]) == 0) {
+#    tokens <- quanteda::tokens("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", remove_punct = TRUE)
+#  }
+#  
+#  dfm_corpus <- quanteda::dfm(tokens)
+#  
+#  # Compute Relevance on the entire corpus
+#  lookup <- quanteda::dfm_lookup(dfm_corpus, dictionary = dictionary, valuetype = "glob")
+#  df_score <- quanteda::convert(lookup, to="data.frame")
+#  df_score$doc_id <- NULL
+#  
+#  return(df_score)
+#}
+#
+#
+#example <- compute_relevance_score(DataMerged$openQ[1], issues_dict)
+#df <- data.frame(matrix(nrow = 0, ncol = length(names(example))))
+#names(df) <- names(example)
+#nbwords <- c()
+#for (i in 1:nrow(DataMerged)) {
+#  row <- compute_relevance_score(DataMerged$openQ[i], issues_dict)
+#  nbwords[i] <- clessnverse::compute_nb_words(DataMerged$openQ[i])
+#  df <- rbind(df, row)
+#  print(i)
+#}
+#names(df) <- paste0("relevance_", names(df))
+
+
+#saveRDS(df, "openQ-merged-new.rds")
+
+# Pour rouler les dictionnaires pour analyses textuelles (fonction en construction)
+
+runDictionary <- function(dataA, word, dictionaryA) {
+  tictoc::tic()
+  dataA <- dataA %>% mutate(word = {{word}})
+  corpusA <- tokens(dataA$word)
+  dfmA    <- dfm(tokens_lookup(corpusA, dictionaryA, nested_scope = "dictionary"))
+  message(green("100% expressions/words found"))
+  tictoc::toc()
+  dataB   <- convert(dfmA, to = "data.frame")
+  return(dataB)
+}
+
+#### 1 - data clean of Question 6 (for topic modeling) ####
+
+stopwordsFrench  <- c(tm::stopwords("fr"), "jai", "quil", "tout", "toutes", "fait", "faire", "etc", "tous","qu'il", "qu'elle", "qu'ils", "qu'elles", "l'", "sais", "être")
+stopwordsEnglish <- tm::stopwords("en")
+
+DataCleanMerged <- DataMerged %>%
+  select(openQ) %>%
+  na.omit() %>%
+  mutate(id = 1:nrow(.), open = tolower(removePunctuation(openQ)),
+         lang = textcat(open),
+         lang = case_when(lang == "english"  ~ "english",
+                          lang == "french"   ~ "french",
+                          lang != c("french","english") ~ "Other")) %>%
+  unnest_tokens(word, openQ) %>%
+  filter(!(word %in% stopwordsEnglish),
+         !(word %in% stopwordsFrench)) %>%
+  group_by(id) %>%
+  mutate(openQ = paste(word, collapse = " ")) %>%
+  select(-word) %>%
+  distinct()
+
+
+# Avec le dictionnaire covid (clessn) et d'enjeux (lexicoder)
+
+#### 3.1 - Analyse du dictionnaire sur la question 6 ####
+
+# Prepare data
+
+DataDictMerge <- DataMerged %>% 
+  select(openQ) %>%
+  na.omit()
+
+# Run dictionary analysis
+
+DataDictMerged <- runDictionary(dataA = DataDictMerge, word = openQ, issues_dict) %>%
+  mutate(moral = immigration + education) %>% # merge les colonnes
+  select(doc_id, healthcare, environment, macroeconomics, moral) %>%  # garder les colonnes qui nous interesse
+  pivot_longer(!doc_id, names_to = "enjeu", values_to = "n") %>%
+  # select(-doc_id) %>% 
+  mutate(mention = ifelse(n > 0, yes = 1, no = 0)) %>% 
+  group_by(enjeu) %>%
+  summarise(n=sum(mention)) %>%
+  mutate(prop  = round(n/sum(n),4)*100,
+         enjeu = fct_reorder(enjeu, prop)) #%>% 
+#top_n(prop, 5) # keep les 5 enjeux les plus mentionnés
+saveRDS(DataDictMerged, "2022data.rds")
+
+# graphique 
+ggplot(DataDictMerged, aes(x=enjeu, y=prop)) +
+  geom_bar(stat="identity", show.legend = F, color="black", fill="blue", size=1.5, width = 0.75) +
+  geom_text(aes(label=as.character(prop)), color="black", size=10, position=position_dodge(width=0.1), vjust=0.8, hjust=-0.3) +
+  coord_flip() +
+  expand_limits(y=0:100) +
+  theme_classic(base_size = 25) + 
+  ggtitle("\nDistribution des enjeux les plus importants") + 
+  scale_x_discrete(labels=c("healthcare" = "Santé", "macroeconomics" = "Économie", "environment" = "Environnement",
+                            "finance" = "Finance", "labour" = "Emploi", "civil_rights" = "Droits civiques", 
+                            "education" = "Éducation", "defence" = "Défense", "social_welfare" = "Sécurité sociale",
+                            "housing" = "Logement", "crime" = "Criminalité", "transportation" = "Transport"))+ 
+  theme(panel.grid = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        strip.text = element_text(size = 50),
+        panel.background = element_rect(fill="transparent"),
+        legend.position="top",
+        legend.title = element_blank(),
+        axis.text.x = element_text(size = 30, colour = "black"),
+        axis.text.y = element_text(size = 30, colour = "black"),
+        axis.title = element_blank(),
+        plot.title = element_text(hjust = 0.5, size=30, colour = "black",face = "bold"),
+        plot.caption = element_text(hjust = 0, size = 37, colour = "black"),
+        legend.text = element_text(size = 35, colour = "black"),
+        legend.key.width = unit(2,"line"))
+ggsave("graph-MII-omnibus-datagotchi-merged.pdf", path = "/Users/axeldery/Dropbox/RECHERCHE/CLESSN/Élections provinciale 2022/histoire-inflation/graphs", width = 20, height = 14, units = "in")
+
+
+
