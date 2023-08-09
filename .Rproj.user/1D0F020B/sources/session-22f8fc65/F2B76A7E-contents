@@ -834,85 +834,85 @@ clean_WPost_rtf <- function(path_to_folder, file_name, country) {
 ######################################################## Loop ################################################
 ########################################################################################################### ##
 
-# # The Sun - Syrie ####
-# file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-The Sun-Syrie")
-# for (file_name in file_names) {
-#   dfi <- clean_sun_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-The Sun-Syrie",
-#                        file_name =  file_name,
-#                        country =  "Syrie")
-#   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
-#   print(file_name)
-# }
+# The Sun - Syrie ####
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-The Sun-Syrie")
+for (file_name in file_names) {
+  dfi <- clean_sun_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-The Sun-Syrie",
+                       file_name =  file_name,
+                       country =  "Syrie")
+  saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
+  print(file_name)
+}
 #
-# # The Sun - Ukraine ####
-# file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-The-Sun")
-# for (file_name in file_names) {
-#   dfi <- clean_sun_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-The-Sun",
-#                        file_name = file_name,
-#                        country = "Ukraine")
-#   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
-#   print(file_name)
-# }
+# The Sun - Ukraine ####
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-The-Sun")
+for (file_name in file_names) {
+  dfi <- clean_sun_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-The-Sun",
+                       file_name = file_name,
+                       country = "Ukraine")
+  saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
+  print(file_name)
+}
 #
-# # Globe - Syrie ####
-# file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/CA-Globe&Mail-Syrie")
-# for (file_name in file_names) {
-#   dfi <- clean_globe_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/CA-Globe&Mail-Syrie",
-#                         file_name = file_name,
-#                         country = "Syrie")
-#   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
-#   print(file_name)
-# }
+# Globe - Syrie ####
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/CA-Globe&Mail-Syrie")
+for (file_name in file_names) {
+  dfi <- clean_globe_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/CA-Globe&Mail-Syrie",
+                        file_name = file_name,
+                        country = "Syrie")
+  saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
+  print(file_name)
+}
 
-# # Globe - Ukraine ####
-# file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Globe-and-Mail")
-# for (file_name in file_names) {
-#   dfi <- clean_globe_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Globe-and-Mail",
-#                          file_name = file_name,
-#                          country = "Ukraine")
-#   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
-#   print(file_name)
-# }
-#
-# # Gardian - Syrie ####
-# file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-Guardian-Syrie")
-# for (file_name in file_names) {
-#   dfi <- clean_gardian_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-Guardian-Syrie",
-#                          file_name = file_name,
-#                          country = "Syrie")
-#   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
-#   print(file_name)
-# }
+# Globe - Ukraine ####
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Globe-and-Mail")
+for (file_name in file_names) {
+  dfi <- clean_globe_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Globe-and-Mail",
+                         file_name = file_name,
+                         country = "Ukraine")
+  saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
+  print(file_name)
+}
 
-# # Gardian - Ukraine ####
-# file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-Guardian")
-# for (file_name in file_names) {
-#   dfi <- clean_gardian_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-Guardian",
-#                          file_name = file_name,
-#                          country = "Ukraine")
-#   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
-#   print(file_name)
-# }
-#
-# # Star - Syrie ####
-# file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/CA-Toronto Star-Syrie")
-# for (file_name in file_names) {
-#   dfi <- clean_star_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/CA-Toronto Star-Syrie",
-#                          file_name = file_name,
-#                          country = "Syrie")
-#   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
-#   print(file_name)
-# }
+# Gardian - Syrie ####
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-Guardian-Syrie")
+for (file_name in file_names) {
+  dfi <- clean_gardian_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-Guardian-Syrie",
+                         file_name = file_name,
+                         country = "Syrie")
+  saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
+  print(file_name)
+}
 
-# # Star - Ukraine ####
-# file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Toronto-Star")
-# for (file_name in file_names) {
-#   dfi <- clean_star_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Toronto-Star",
-#                          file_name = file_name,
-#                          country = "Ukraine")
-#   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
-#   print(file_name)
-# }
+# Gardian - Ukraine ####
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-Guardian")
+for (file_name in file_names) {
+  dfi <- clean_gardian_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-Guardian",
+                         file_name = file_name,
+                         country = "Ukraine")
+  saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
+  print(file_name)
+}
+
+# Star - Syrie ####
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/CA-Toronto Star-Syrie")
+for (file_name in file_names) {
+  dfi <- clean_star_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/CA-Toronto Star-Syrie",
+                         file_name = file_name,
+                         country = "Syrie")
+  saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
+  print(file_name)
+}
+
+# Star - Ukraine ####
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Toronto-Star")
+for (file_name in file_names) {
+  dfi <- clean_star_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Toronto-Star",
+                         file_name = file_name,
+                         country = "Ukraine")
+  saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
+  print(file_name)
+}
 
 # NYT - Syrie ####
 file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/US-NYTimes-Syrie")
@@ -975,16 +975,15 @@ for (file_name in file_names) {
   print(file_name)
 }
 
-## Tout charger les CSV en même temps
-# rds_all <- list.files( path = "_SharedFolder_article_syrie-ukraine/Data/clean", pattern = "*.rds", full.names = TRUE) %>%
-#  map_dfr(readRDS) %>%
-#   mutate(media_country = ifelse(source == "Toronto Star", "Canada",
-#                                 ifelse(source == "The Globe and Mail", "Canada",
-#                                        ifelse(source == "The New York Times", "United States",
-#                                               ifelse(source == "The Washington Post", "United States",
-#                                                      ifelse(source == "The Sun", "UK",
-#                                                             ifelse(source == "The Gardian", "UK",
-#                                                                    ifelse(source == "The Times", "UK", "Error!!"))))))))
-
-## Enregistrer le csv
-#saveRDS(rds_all, paste0("_SharedFolder_article_syrie-ukraine/Data/", "dataset.rds"))
+# Tout charger les CSV en même temps
+ rds_all <- list.files( path = "_SharedFolder_article_syrie-ukraine/Data/clean", pattern = "*.rds", full.names = TRUE) %>%
+  map_dfr(readRDS) %>%
+   mutate(media_country = ifelse(source == "Toronto Star", "Canada",
+                                 ifelse(source == "The Globe and Mail", "Canada",
+                                        ifelse(source == "The New York Times", "United States",
+                                               ifelse(source == "The Washington Post", "United States",
+                                                      ifelse(source == "The Sun", "UK",
+                                                             ifelse(source == "The Gardian", "UK",
+                                                                    ifelse(source == "The UK Times", "UK", "Error!!"))))))))
+# Enregistrer le csv complet
+saveRDS(rds_all, paste0("_SharedFolder_article_syrie-ukraine/Data/", "dataset.rds"))

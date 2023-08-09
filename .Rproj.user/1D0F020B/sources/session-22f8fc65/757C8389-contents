@@ -31,6 +31,7 @@ library(htmlwidgets) # pour enregistrer des radar chart
 library(webshot) # pour enregistrer des radar chart
 library(treemap)
 library(gridExtra)
+library(stargazer)
 
 ########################################################################################################### ##
 ####################################################### DATA #################################################
@@ -48,7 +49,8 @@ data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/dataset.rds") %>%
 
 dataSyrie2015 <- data %>%
   filter(country == "Syrie") %>%
-  filter(between(date, as.Date('2015-01-01'), as.Date('2015-12-31')))
+  filter(between(date, as.Date('2015-01-01'), as.Date('2015-12-31'))) %>%
+  filter(source %in% c("The Globe and Mail", "Toronto Star"))
  # filter(opinion == 0)  %>%
 #  filter(opinion != 0)
 
@@ -62,7 +64,8 @@ dataSyrie2015 <- data %>%
 
 dataUkraine <- data %>%
   filter(country == "Ukraine") %>%
-  filter(between(date, as.Date('2022-01-01'), as.Date('2022-12-31')))# %>%
+  filter(between(date, as.Date('2022-01-01'), as.Date('2022-12-31')))  %>%
+  filter(source %in% c("The Globe and Mail", "Toronto Star"))
   #filter(opinion == 0)
 
 #write_csv(dataUkraine, paste0("_SharedFolder_article_syrie-ukraine/Data/", "dataset_refugees-Ukraine.csv"))
@@ -72,6 +75,10 @@ dataUkraine <- data %>%
 #   filter(country == "Ukraine") %>%
 #   filter(between(date, as.Date('2022-01-01'), as.Date('2022-12-31'))) %>%
 #   filter(opinion != 0)
+
+nb_refugies <- read.csv("_SharedFolder_article_syrie-ukraine/Data/nb_refugies.csv", sep = ";") %>%
+  mutate(date = as.Date(date, format = "%Y-%m-%d"))
+
 
 ########################################################################################################### ##
 ################################################# Corpus anglo ###############################################
@@ -263,7 +270,7 @@ plot1 <- ggplot(count1, aes(x = date, y = n)) +
   geom_line(aes(color = country), size = 1, color = "#5B9BD5") +
   scale_x_datetime("", date_labels = "%b", date_breaks = "1 month") +
   geom_vline(xintercept = as.POSIXct("2022-03-15"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
-  geom_text(x = as.POSIXct("2022-03-15"), y = max(count$n) * 1.3, label = "Migration peak", angle = 90, vjust = -0.6) +
+ # geom_text(x = as.POSIXct("2022-03-15"), y = max(count$n) * 1.3, label = "Migration peak", angle = 90, vjust = -0.6) +
   scale_y_continuous(name="", breaks = c(0, 10, 20, 30, 40, 50, 60), limits = c(0, 65)) +
   theme_clean() +
   ggtitle("Ukraine (2022)") +
@@ -282,13 +289,13 @@ plot1 <- ggplot(count1, aes(x = date, y = n)) +
 plot2 <- ggplot(count2, aes(x = date, y = n)) +
   geom_line(aes(color = country), size = 1, color = "#CC9933") +
   scale_x_datetime("", date_labels = "%b", date_breaks = "1 month") +
-  geom_vline(xintercept = as.POSIXct("2015-10-01"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
-  geom_text(x = as.POSIXct("2015-10-01"), y = max(count$n) * 1.3, label = "Migration peak", angle = 90, vjust = -0.60) +
-  geom_vline(xintercept = as.POSIXct("2015-09-02"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
-  geom_text(x = as.POSIXct("2015-09-02"), y = max(count$n) * 1.26, label = "Death of Alan Kurdi", angle = 90, vjust = -0.60) +
-  geom_vline(xintercept = as.POSIXct("2015-11-13"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
-  geom_text(x = as.POSIXct("2015-11-13"), y = max(count$n) * 1.32, label = "Paris attacks", angle = 90, vjust = -0.60) +
-  scale_y_continuous(name="Number of articles per month\n", breaks = c(0, 10, 20, 30, 40, 50, 60), limits = c(0, 65)) +
+  # geom_vline(xintercept = as.POSIXct("2015-10-01"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
+  # geom_text(x = as.POSIXct("2015-10-01"), y = max(count$n) * 1.3, label = "Migration peak", angle = 90, vjust = -0.60) +
+  # geom_vline(xintercept = as.POSIXct("2015-09-02"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
+  # geom_text(x = as.POSIXct("2015-09-02"), y = max(count$n) * 1.26, label = "Death of Alan Kurdi", angle = 90, vjust = -0.60) +
+  # geom_vline(xintercept = as.POSIXct("2015-11-13"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
+  # geom_text(x = as.POSIXct("2015-11-13"), y = max(count$n) * 1.32, label = "Paris attacks", angle = 90, vjust = -0.60) +
+  # scale_y_continuous(name="Number of articles per month\n", breaks = c(0, 10, 20, 30, 40, 50, 60), limits = c(0, 65)) +
   theme_clean() +
   ggtitle("Syria (2015)") +
   theme(plot.title = element_text(size = 18),
@@ -310,7 +317,7 @@ ggsave("../_SharedFolder_article_syrie-ukraine/nbArticles/nbArticles-syrie-ukrai
 
 
 ########################################################################################################### ##
-############################################## Sentiment EN ###########################################
+################################### Sentiment EN Syrie VS Ukraine ############################
 ########################################################################################################### ##
 
 # Créer une fonction pour analyser le ton des mots avec le Lexicoder Sentiment Dictionary
@@ -322,8 +329,8 @@ runDictionaryFunction <- function(corpusA, dataA, word, dfmA, dataB, dictionaryA
 }
 
 # Pour changer un DTM en format tidy, on utilise tidy() du broom package.
-data_tidy <- tidy(cleanSyrie2015_corp) %>%
-  bind_cols(dataSyrie2015) %>%
+data_tidy <- tidy(cleanUkraine_corp) %>%
+  bind_cols(dataUkraine) %>%
   select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id, -text...10) %>%
   rename(text = text...8) %>%
   unnest_tokens(word, text)
@@ -363,12 +370,282 @@ graphdata_syria <- bind_cols(polarity, data_ton) %>%
   mutate(propNeg = (negative/total_words),
          propPos = (positive/total_words)) %>%
   mutate(diffProp = propPos - propNeg) %>%
-  ungroup() %>%
   mutate(country = "Syria")
 
 # On met tous ensemble et on calcule
 graphdata <- graphdata_ukraine %>%
   bind_rows(graphdata_syria) %>%
+  group_by(country) %>%
+  summarise(
+    n=n(),
+    mean=mean(diffProp),
+    sd=sd(diffProp)) %>%
+  mutate(se=sd/sqrt(n))  %>%
+  mutate(ic=se * qt((1-0.05)/2 + .5, n-1))
+
+
+# Standard deviation
+ggplot(graphdata) +
+  geom_bar( aes(x=country, y=mean), stat="identity", fill="forestgreen", alpha=0.5) +
+  geom_errorbar( aes(x=country, ymin=mean-sd, ymax=mean+sd), width=0.4, colour="orange", alpha=0.9, size=1.5) +
+  ggtitle("using standard deviation")
+
+# Standard Error
+ggplot(graphdata) +
+  geom_bar( aes(x=country, y=mean), stat="identity", fill="forestgreen", alpha=0.5) +
+  geom_errorbar( aes(x=country, ymin=mean-se, ymax=mean+se), width=0.4, colour="orange", alpha=0.9, size=1.5) +
+  ggtitle("using standard error")
+
+# Confidence Interval
+ggplot(graphdata) +
+  geom_bar( aes(x=country, y=mean), stat="identity", fill="forestgreen", alpha=0.5) +
+  geom_errorbar( aes(x=country, ymin=mean-ic, ymax=mean+ic), width=0.4, colour="orange", alpha=0.9, size=1.5) +
+  ggtitle("using confidence interval")
+
+# Permutation
+
+# Chargement des bibliothèques nécessaires
+library(boot)
+
+# Calcul de la différence de ton observée entre les deux groupes
+diff_observed <-  graphdata_ukraine %>%
+  bind_rows(graphdata_syria) %>%
+  ungroup() %>%
+  summarise(mean=mean(diffProp))
+
+# Fonction pour générer une statistique de test (différence de moyennes)
+statistic <- function(data, indices) {
+  mean(graphdata_ukraine$diffProp[indices]) - mean(graphdata_syria$diffProp[indices])
+}
+
+# Utilisation de la fonction boot pour effectuer le test de permutation
+boot_results <- boot(data = data.frame(ton_syriens, ton_ukrainiens), statistic, R = 1000)
+
+# Calcul de la p-valeur
+p_value <- sum(abs(boot_results$t) >= abs(diff_observed)) / length(boot_results$t)
+
+# Création de vos données simulées (remplacez par vos propres données)
+set.seed(123) # pour la reproductibilité
+ton_syriens <- rnorm(100, mean = 0.2, sd = 0.1) # Ton pour les réfugiés syriens
+ton_ukrainiens <- rnorm(100, mean = 0.25, sd = 0.1) # Ton pour les réfugiés ukrainiens
+
+# Test t de Student
+t_test <- t.test(graphdata_ukraine$diffProp, graphdata_syria$diffProp, alternative = "two.sided", var.equal = TRUE)
+
+# Affichage des résultats
+cat("Statistique de test t:", t_test$statistic, "\n")
+cat("P-valeur:", t_test$p.value, "\n")
+
+
+# # On plot
+# ggplot(graphdata, aes(x = date, y = diffProp)) +
+#   geom_hline(yintercept = 0, color = "red") +
+#  geom_line() +
+#  # geom_point(alpha = 0.4) +
+#   geom_smooth(se = F, span = 0.4, size = 2.5) +
+#   scale_x_datetime("", date_labels = "%m-%Y", date_breaks = "1 month") +
+#   # scale_color_viridis_d(labels = c("CBC", "Toronto Star"),
+#   #                       limits = c("CBC", "TStar")) +
+#   theme_clean() +
+#   # labs(title = "Évolution du ton des articles sur le cannabis dans les médias anglophones (1985 à 2019)",
+#   #      # subtitle = "Version 1: aucune pondération.",
+#   #      subtitle = "",
+#   #      # caption = "Dictionnaire: version francophone du Lexicoder (Duval et Pétry, 2016)
+#   #      # Pondéré en fonction du nombre moyen de mots par mois, après nettoyage des textes et application du dictionnaire") +
+#   #      caption = "n = 14 771 articles
+#   #      Dictionnaire: Lexicoder (Soroka and Young, 2015)
+#   #      L'indice de ton est calculé en fonction de la différence entre les proportions de mots positifs et négatifs par mois") +
+#   ylab("Proportion de mots négatifs\n") +
+#   theme(plot.title = element_text(hjust = -1.5, size = 18),
+#         plot.subtitle=element_text(size = 13),
+#         plot.caption = element_text(hjust = 1, size = 11),
+#         axis.text.x = element_text(size = 12),
+#         axis.text.y = element_text(size = 12),
+#         axis.title.y = element_text(size = 14),
+#         legend.position = "top") +
+#   guides(color=guide_legend(title="Country"))
+#
+# ggsave("../_SharedFolder_article_syrie-ukraine/_v2/lexicoder/lexicoder-ukraine.png", width = 30, height = 17, units = c("cm"))
+
+########################################################################################################### ##
+########################################## Sentiment EN Opinion Vs article ###################################
+########################################################################################################### ##
+
+# Créer une fonction pour analyser le ton des mots avec le Lexicoder Sentiment Dictionary
+runDictionaryFunction <- function(corpusA, dataA, word, dfmA, dataB, dictionaryA) {
+  corpusA <- corpus(dataA$word)
+  dfmA    <- dfm(corpusA, dictionary = dictionaryA)
+  dataB   <- convert(dfmA, to = "data.frame")
+  return(dataB)
+}
+
+# Pour changer un DTM en format tidy, on utilise tidy() du broom package.
+data_tidy <- tidy(cleanSyrie2015_corp) %>%
+  bind_cols(dataSyrie2015) %>%
+  select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id, -text...10) %>%
+  rename(text = text...8) %>%
+  unnest_tokens(word, text)
+
+# Pour obtenir des %
+polarity <- data_tidy %>%
+  mutate(date = as.POSIXct(date))  %>%
+  group_by(date) %>%
+  mutate(total_words = n())
+
+# On utilise le lexicoder anglo du package de Quanteda, qui se nomme data_dictionary_LSD2015
+data_ton <- runDictionaryFunction(dataA = polarity,
+                                  word = word,
+                                  dictionaryA = data_dictionary_LSD2015)
+
+# Pour le top négatif et positif
+topcount <- bind_cols(polarity, data_ton) %>%
+  group_by(word) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive))
+
+# Opinion
+graphdata_opinion <- bind_cols(polarity, data_ton) %>%
+  group_by(date, total_words) %>%
+  filter(opinion == 1) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive)) %>%
+  mutate(propNeg = (negative/total_words),
+         propPos = (positive/total_words)) %>%
+  mutate(diffProp = propPos - propNeg) %>%
+  mutate(type = "Opinion")
+
+# News
+graphdata_news <- bind_cols(polarity, data_ton) %>%
+  group_by(date, total_words) %>%
+  filter(opinion == 0) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive)) %>%
+  mutate(propNeg = (negative/total_words),
+         propPos = (positive/total_words)) %>%
+  mutate(diffProp = propPos - propNeg) %>%
+  mutate(type = "News")
+
+# On met tous ensemble et on calcule
+graphdata <- graphdata_news %>%
+  bind_rows(graphdata_opinion) %>%
+  group_by(type) %>%
+  summarise(
+    n=n(),
+    mean=mean(diffProp),
+    sd=sd(diffProp)) %>%
+  mutate(se=sd/sqrt(n))  %>%
+  mutate(ic=se * qt((1-0.05)/2 + .5, n-1))
+
+
+# Standard deviation
+ggplot(graphdata) +
+  geom_bar( aes(x=type, y=mean), stat="identity", fill="forestgreen", alpha=0.5) +
+  geom_errorbar( aes(x=type, ymin=mean-sd, ymax=mean+sd), width=0.4, colour="orange", alpha=0.9, size=1.5) +
+  ggtitle("using standard deviation")
+
+# Standard Error
+ggplot(graphdata) +
+  geom_bar( aes(x=type, y=mean), stat="identity", fill="forestgreen", alpha=0.5) +
+  geom_errorbar( aes(x=type, ymin=mean-se, ymax=mean+se), width=0.4, colour="orange", alpha=0.9, size=1.5) +
+  ggtitle("using standard error")
+
+# Confidence Interval
+ggplot(graphdata) +
+  geom_bar( aes(x=type, y=mean), stat="identity", fill="forestgreen", alpha=0.5) +
+  geom_errorbar( aes(x=type, ymin=mean-ic, ymax=mean+ic), width=0.4, colour="orange", alpha=0.9, size=1.5) +
+  ggtitle("using confidence interval")
+
+# # On plot
+# ggplot(graphdata, aes(x = date, y = diffProp)) +
+#   geom_hline(yintercept = 0, color = "red") +
+#  geom_line() +
+#  # geom_point(alpha = 0.4) +
+#   geom_smooth(se = F, span = 0.4, size = 2.5) +
+#   scale_x_datetime("", date_labels = "%m-%Y", date_breaks = "1 month") +
+#   # scale_color_viridis_d(labels = c("CBC", "Toronto Star"),
+#   #                       limits = c("CBC", "TStar")) +
+#   theme_clean() +
+#   # labs(title = "Évolution du ton des articles sur le cannabis dans les médias anglophones (1985 à 2019)",
+#   #      # subtitle = "Version 1: aucune pondération.",
+#   #      subtitle = "",
+#   #      # caption = "Dictionnaire: version francophone du Lexicoder (Duval et Pétry, 2016)
+#   #      # Pondéré en fonction du nombre moyen de mots par mois, après nettoyage des textes et application du dictionnaire") +
+#   #      caption = "n = 14 771 articles
+#   #      Dictionnaire: Lexicoder (Soroka and Young, 2015)
+#   #      L'indice de ton est calculé en fonction de la différence entre les proportions de mots positifs et négatifs par mois") +
+#   ylab("Proportion de mots négatifs\n") +
+#   theme(plot.title = element_text(hjust = -1.5, size = 18),
+#         plot.subtitle=element_text(size = 13),
+#         plot.caption = element_text(hjust = 1, size = 11),
+#         axis.text.x = element_text(size = 12),
+#         axis.text.y = element_text(size = 12),
+#         axis.title.y = element_text(size = 14),
+#         legend.position = "top") +
+#   guides(color=guide_legend(title="Country"))
+#
+# ggsave("../_SharedFolder_article_syrie-ukraine/_v2/lexicoder/lexicoder-ukraine.png", width = 30, height = 17, units = c("cm"))
+
+########################################################################################################### ##
+########################################## Sentiment EN Opinion Syrie Vs Opinion Ukraine #####################
+########################################################################################################### ##
+
+# Créer une fonction pour analyser le ton des mots avec le Lexicoder Sentiment Dictionary
+runDictionaryFunction <- function(corpusA, dataA, word, dfmA, dataB, dictionaryA) {
+  corpusA <- corpus(dataA$word)
+  dfmA    <- dfm(corpusA, dictionary = dictionaryA)
+  dataB   <- convert(dfmA, to = "data.frame")
+  return(dataB)
+}
+
+# Pour changer un DTM en format tidy, on utilise tidy() du broom package.
+data_tidy <- tidy(cleanUkraine_corp) %>%
+  bind_cols(dataUkraine) %>%
+  select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id, -text...10) %>%
+  rename(text = text...8) %>%
+  unnest_tokens(word, text)
+
+# Pour obtenir des %
+polarity <- data_tidy %>%
+  mutate(date = as.POSIXct(date))  %>%
+  group_by(date) %>%
+  mutate(total_words = n())
+
+# On utilise le lexicoder anglo du package de Quanteda, qui se nomme data_dictionary_LSD2015
+data_ton <- runDictionaryFunction(dataA = polarity,
+                                  word = word,
+                                  dictionaryA = data_dictionary_LSD2015)
+
+# Pour le top négatif et positif
+topcount <- bind_cols(polarity, data_ton) %>%
+  group_by(word) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive))
+
+# Ukraine
+graphdata_Ukraine <- bind_cols(polarity, data_ton) %>%
+  group_by(date, total_words) %>%
+  filter(opinion == 0) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive)) %>%
+  mutate(propNeg = (negative/total_words),
+         propPos = (positive/total_words)) %>%
+  mutate(diffProp = propPos - propNeg) %>%
+  mutate(country = "Ukraine")
+
+# Syria
+graphdata_Syria <- bind_cols(polarity, data_ton) %>%
+  group_by(date, total_words) %>%
+  filter(opinion == 0) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive)) %>%
+  mutate(propNeg = (negative/total_words),
+         propPos = (positive/total_words)) %>%
+  mutate(diffProp = propPos - propNeg) %>%
+  mutate(country = "Syria")
+
+# On met tous ensemble et on calcule
+graphdata <- graphdata_Ukraine %>%
+  bind_rows(graphdata_Syria) %>%
   group_by(country) %>%
   summarise(
     n=n(),
@@ -425,6 +702,7 @@ ggplot(graphdata) +
 #   guides(color=guide_legend(title="Country"))
 #
 # ggsave("../_SharedFolder_article_syrie-ukraine/_v2/lexicoder/lexicoder-ukraine.png", width = 30, height = 17, units = c("cm"))
+
 
 ########################################################################################################### ##
 ################################################## Time series ###############################################
@@ -800,7 +1078,68 @@ ggplot(word_probs2, aes(x = date, y = gamma)) +
 #  scale_color_manual(values=brewer.pal(n=4, "Set1"), name="Topic")
 ggsave("../_SharedFolder_article_syrie-ukraine/graphs/_v2/lda_syrie_2015/3k_LDAgamma-syrie2015.png", width = 30, height = 17, units = c("cm"))
 
+########################################################################################################### ##
+################################################## Regressions ###############################################
+########################################################################################################### ##
 
+# Ukraine
+graphdata_Ukraine <- bind_cols(polarity, data_ton) %>%
+  group_by(date, total_words) %>%
+  mutate(date = floor_date(as_date(date), "month")) %>%
+#  filter(opinion == 0) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive)) %>%
+  mutate(propNeg = (negative/total_words),
+         propPos = (positive/total_words)) %>%
+  mutate(diffProp = propPos - propNeg) %>%
+  mutate(country = "Ukraine") %>%
+  group_by(country, date) %>%
+  summarise(ton = mean(diffProp))
+
+# Syria
+graphdata_Syria <- bind_cols(polarity, data_ton) %>%
+  group_by(date, total_words) %>%
+  mutate(date = floor_date(as_date(date), "month")) %>%
+#  filter(opinion == 0) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive)) %>%
+  mutate(propNeg = (negative/total_words),
+         propPos = (positive/total_words)) %>%
+  mutate(diffProp = propPos - propNeg) %>%
+  mutate(country = "Syria") %>%
+  group_by(country, date) %>%
+  summarise(ton = mean(diffProp))
+
+reg <- bind_rows(graphdata_Syria, graphdata_Ukraine) %>%
+  right_join(nb_refugies, by = "date")
+
+# Modèle 1: Juste classe
+model_1 <- lm(ton ~ nb_refugies, data = reg)
+summary(model_1)
+
+# Modèle 1: Juste classe
+model_2 <- lm(ton ~ nb_refugies + country.y, data = reg)
+summary(model_2)
+
+# Modèle 1: Juste classe
+model_3 <- lm(ton ~ nb_refugies + country.y + nb_refugies*country.y, data = reg)
+summary(model_3)
+
+# Stargazer pour clusters
+stargazer(model_1, model_2, model_3,
+          type = 'latex',
+
+          header=FALSE, # to get rid of r package output text
+
+          single.row = TRUE, # to put coefficients and standard errors on same line
+
+          no.space = F, # to remove the spaces after each line of coefficients
+
+          column.sep.width = "3pt", # to reduce column width
+
+          font.size = "small" # to make font size smaller
+
+)
 
 ########################################################################################################### ##
 ####################################################### FIN ##################################################
