@@ -37,10 +37,11 @@ library(stargazer)
 ####################################################### DATA #################################################
 ########################################################################################################### ##
 
-
 data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/dataset.rds") %>%
   unnest_sentences(text, text) %>%
-  filter(grepl('refugee|refugees|migrant|migrants', text))
+  filter(grepl('refugee|refugees|migrant|migrants', text)) %>%
+  ungroup() %>%
+  mutate(id_sentence = row_number())
 #  filter(opinion != 0) %>%
 
 
@@ -49,8 +50,8 @@ data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/dataset.rds") %>%
 
 dataSyrie2015 <- data %>%
   filter(country == "Syrie") %>%
-  filter(between(date, as.Date('2015-01-01'), as.Date('2015-12-31'))) %>%
-  filter(source %in% c("The Globe and Mail", "Toronto Star"))
+  filter(between(date, as.Date('2015-01-01'), as.Date('2015-12-31')))# %>%
+ # filter(source %in% c("The Globe and Mail", "Toronto Star"))
  # filter(opinion == 0)  %>%
 #  filter(opinion != 0)
 
@@ -64,8 +65,8 @@ dataSyrie2015 <- data %>%
 
 dataUkraine <- data %>%
   filter(country == "Ukraine") %>%
-  filter(between(date, as.Date('2022-01-01'), as.Date('2022-12-31')))  %>%
-  filter(source %in% c("The Globe and Mail", "Toronto Star"))
+  filter(between(date, as.Date('2022-01-01'), as.Date('2022-12-31')))#  %>%
+#  filter(source %in% c("The Globe and Mail", "Toronto Star"))
   #filter(opinion == 0)
 
 #write_csv(dataUkraine, paste0("_SharedFolder_article_syrie-ukraine/Data/", "dataset_refugees-Ukraine.csv"))
@@ -76,9 +77,15 @@ dataUkraine <- data %>%
 #   filter(between(date, as.Date('2022-01-01'), as.Date('2022-12-31'))) %>%
 #   filter(opinion != 0)
 
-nb_refugies <- read.csv("_SharedFolder_article_syrie-ukraine/Data/nb_refugies.csv", sep = ";") %>%
-  mutate(date = as.Date(date, format = "%Y-%m-%d"))
+nb_refugies_day <- read.csv("_SharedFolder_article_syrie-ukraine/Data/nb_refugies_day.csv", sep = ";") %>%
+  mutate(date = as.Date(date, format = "%Y-%m-%d"),
+         refugies1000 = crossing_border/1000)
 
+# Date de début du conflit en Syrie
+start_date_syria <- ymd("2011-03-15")
+
+# Date de début du conflit en Ukraine
+start_date_ukraine <- ymd("2022-02-24")
 
 ########################################################################################################### ##
 ################################################# Corpus anglo ###############################################
@@ -199,7 +206,6 @@ cleanUkraine_corp <- clean_corpusEN(dataUkraine_corpus)
 dataSyrie2015_dtm <- DocumentTermMatrix(cleanSyrie2015_corp)
 
 dataUkraine_dtm <- DocumentTermMatrix(cleanUkraine_corp)
-
 
 # On peut aussi créer une term-document matrix (notamment pour dendrogram)
 #Weed_tdmFR <- TermDocumentMatrix(clean_corpFR)
@@ -1082,51 +1088,135 @@ ggsave("../_SharedFolder_article_syrie-ukraine/graphs/_v2/lda_syrie_2015/3k_LDAg
 ################################################## Regressions ###############################################
 ########################################################################################################### ##
 
+# Créer une fonction pour analyser le ton des mots avec le Lexicoder Sentiment Dictionary
+runDictionaryFunction <- function(corpusA, dataA, word, dfmA, dataB, dictionaryA) {
+  corpusA <- corpus(dataA$word)
+  dfmA    <- dfm(corpusA, dictionary = dictionaryA)
+  dataB   <- convert(dfmA, to = "data.frame")
+  return(dataB)
+}
+
+family <- c("women", "woman", "female", "mother", "mothers", "mom", "moms", "father", "fathers", "dad", "dads",
+            "child", "children", "kid", "kids", "girl", "girls", "boy", "boys",
+            "family", "families", "parent", "parents", "sibling", "siblings", "brother", "brothers", "sister", "sisters",
+            "spouse", "spouses", "husband", "husbands", "son", "sons", "daughter", "daughters",
+            "grandparent", "grandparents", "grandmother", "grandmothers", "grandfather", "grandfathers",
+            "grandchild", "grandchildren", "niece", "nieces", "nephew", "nephews",
+            "aunt", "aunts", "uncle", "uncles")
+
+men <- c("men", "man", "male")
+
+# Pour changer un DTM en format tidy, on utilise tidy() du broom package.
+data_tidy_ukraine <- tidy(cleanUkraine_corp) %>%
+  bind_cols(dataUkraine) %>%
+  select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id, -text...10) %>%
+  rename(text = text...8) %>%
+  unnest_tokens(word, text)
+
+# Pour obtenir des %
+polarity_ukraine <- data_tidy_ukraine %>%
+  mutate(date = as.POSIXct(date))  %>%
+  group_by(id_sentence) %>%
+  mutate(total_words_sentence = n()) %>%
+  ungroup() %>%
+  group_by(date) %>%
+  mutate(total_words_day1000 = n()/1000)
+
+
+# On utilise le lexicoder anglo du package de Quanteda, qui se nomme data_dictionary_LSD2015
+data_ton_ukraine <- runDictionaryFunction(dataA = polarity_ukraine,
+                                  word = word,
+                                  dictionaryA = data_dictionary_LSD2015)
+
 # Ukraine
-graphdata_Ukraine <- bind_cols(polarity, data_ton) %>%
-  group_by(date, total_words) %>%
-  mutate(date = floor_date(as_date(date), "month")) %>%
-#  filter(opinion == 0) %>%
+graphdata_ukraine <- bind_cols(polarity_ukraine, data_ton_ukraine) %>%
+  mutate(family = ifelse(word %in% family, 1, 0),
+         men = ifelse(word %in% men, 1, 0)) %>%
+  group_by(id_sentence) %>%
+  mutate(family_sum = sum(family),
+         men_sum = sum(men)) %>%
+  ungroup() %>%
+  group_by(id_sentence, date, total_words_sentence, source, opinion, country, media_country, total_words_day1000, family_sum, men_sum) %>%
   summarise(negative = sum(negative),
             positive = sum(positive)) %>%
-  mutate(propNeg = (negative/total_words),
-         propPos = (positive/total_words)) %>%
-  mutate(diffProp = propPos - propNeg) %>%
+  mutate(propNeg = (negative/total_words_sentence),
+         propPos = (positive/total_words_sentence)) %>%
+  mutate(ton = propPos - propNeg) %>%
   mutate(country = "Ukraine") %>%
-  group_by(country, date) %>%
-  summarise(ton = mean(diffProp))
+  inner_join(nb_refugies_day, by = c("country", "date")) %>%
+  mutate(date = ymd(date),
+         days_since_conflict_start100 = as.numeric((date - start_date_ukraine)/100))
+
+# Pour changer un DTM en format tidy, on utilise tidy() du broom package.
+data_tidy_syria <- tidy(cleanSyrie2015_corp) %>%
+  bind_cols(dataSyrie2015) %>%
+  select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id, -text...10) %>%
+  rename(text = text...8) %>%
+  unnest_tokens(word, text)
+
+# Pour obtenir des %
+polarity_syria <- data_tidy_syria %>%
+  mutate(date = as.POSIXct(date))  %>%
+  group_by(id_sentence) %>%
+  mutate(total_words_sentence = n()) %>%
+  ungroup() %>%
+  group_by(date) %>%
+  mutate(total_words_day1000 = n()/1000)
+
+# On utilise le lexicoder anglo du package de Quanteda, qui se nomme data_dictionary_LSD2015
+data_ton_syria <- runDictionaryFunction(dataA = polarity_syria,
+                                          word = word,
+                                          dictionaryA = data_dictionary_LSD2015)
 
 # Syria
-graphdata_Syria <- bind_cols(polarity, data_ton) %>%
-  group_by(date, total_words) %>%
-  mutate(date = floor_date(as_date(date), "month")) %>%
-#  filter(opinion == 0) %>%
+graphdata_syria <- bind_cols(polarity_syria, data_ton_syria) %>%
+  mutate(family = ifelse(word %in% family, 1, 0),
+         men = ifelse(word %in% men, 1, 0)) %>%
+  group_by(id_sentence) %>%
+  mutate(family_sum = sum(family),
+         men_sum = sum(men)) %>%
+  ungroup() %>%
+  group_by(id_sentence, date, total_words_sentence, source, opinion, country, media_country, total_words_day1000, family_sum, men_sum) %>%
   summarise(negative = sum(negative),
             positive = sum(positive)) %>%
-  mutate(propNeg = (negative/total_words),
-         propPos = (positive/total_words)) %>%
-  mutate(diffProp = propPos - propNeg) %>%
+  mutate(propNeg = (negative/total_words_sentence),
+         propPos = (positive/total_words_sentence)) %>%
+  mutate(ton = propPos - propNeg) %>%
   mutate(country = "Syria") %>%
-  group_by(country, date) %>%
-  summarise(ton = mean(diffProp))
+  inner_join(nb_refugies_day, by = c("country", "date")) %>%
+  mutate(date = ymd(date),
+         days_since_conflict_start100 = as.numeric((date - start_date_syria))/100)
 
-reg <- bind_rows(graphdata_Syria, graphdata_Ukraine) %>%
-  right_join(nb_refugies, by = "date")
+reg <- bind_rows(graphdata_syria, graphdata_ukraine)
 
-# Modèle 1: Juste classe
-model_1 <- lm(ton ~ nb_refugies, data = reg)
+
+# factorisé les variable pour déterminer les classes de référence
+reg$source <- factor(reg$source)
+reg <- within(reg, source <- relevel(source, ref = "The New York Times"))
+
+reg$media_country <- factor(reg$media_country)
+reg <- within(reg, media_country <- relevel(media_country, ref = "Canada"))
+
+
+# Modèle 1
+model_1 <- lm(ton ~ country, data = reg)
 summary(model_1)
 
-# Modèle 1: Juste classe
-model_2 <- lm(ton ~ nb_refugies + country.y, data = reg)
+# Modèle 2
+model_2 <- lm(ton ~ country + refugies1000, data = reg)
 summary(model_2)
 
-# Modèle 1: Juste classe
-model_3 <- lm(ton ~ nb_refugies + country.y + nb_refugies*country.y, data = reg)
+# Modèle 3
+model_3 <- lm(ton ~ country + refugies1000 + media_country, data = reg)
 summary(model_3)
 
+# Modèle 4: Juste classe
+model_4 <- lm(ton ~ country + refugies1000 + media_country +
+                total_words_day1000 + source + opinion + family_sum + men_sum + days_since_conflict_start100, data = reg)
+summary(model_4)
+
 # Stargazer pour clusters
-stargazer(model_1, model_2, model_3,
+stargazer(model_1, model_2, model_3, model_4,
           type = 'latex',
 
           header=FALSE, # to get rid of r package output text
@@ -1135,9 +1225,9 @@ stargazer(model_1, model_2, model_3,
 
           no.space = F, # to remove the spaces after each line of coefficients
 
-          column.sep.width = "3pt", # to reduce column width
+          column.sep.width = "1pt", # to reduce column width
 
-          font.size = "small" # to make font size smaller
+          font.size = "footnotesize" # to make font size smaller
 
 )
 
