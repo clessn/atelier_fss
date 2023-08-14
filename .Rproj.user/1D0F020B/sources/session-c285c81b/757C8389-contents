@@ -1197,7 +1197,6 @@ reg <- within(reg, source <- relevel(source, ref = "The New York Times"))
 reg$media_country <- factor(reg$media_country)
 reg <- within(reg, media_country <- relevel(media_country, ref = "Canada"))
 
-
 # Modèle 1
 model_1 <- lm(ton ~ country, data = reg)
 summary(model_1)
