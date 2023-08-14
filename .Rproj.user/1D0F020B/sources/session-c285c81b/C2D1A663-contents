@@ -27,7 +27,7 @@ clean_sun_rtf <- function(path_to_folder, file_name, country) {
   df_data2 <- df_data %>%
     mutate(variable =
              ifelse(data %in% c(grep("janvier [1-9]", data, value=T),
-                                grep("[1-9] f$", data, value=T),
+                                grep("[0-9] f$", data, value=T),
                                 grep("février [1-9]", data, value=T),
                                 grep("mars [1-9]", data, value=T),
                                 grep("avril [1-9]", data, value=T),
@@ -39,7 +39,7 @@ clean_sun_rtf <- function(path_to_folder, file_name, country) {
                                 grep("septembre [1-9]", data, value=T),
                                 grep("octobre [1-9]", data, value=T),
                                 grep("novembre [1-9]", data, value=T),
-                                grep("[1-9] d$", data, value=T),
+                                grep("[0-9] d$", data, value=T),
                                 grep("décembre [1-9]", data, value=T)), "date",
                     ifelse(grepl("mots", data), "words",
                            ifelse(data %in% c(grep("^t [1-9]", data, value=T),
@@ -94,10 +94,16 @@ clean_sun_rtf <- function(path_to_folder, file_name, country) {
     # On ajoute l'indication des opinions
     left_join(opinions, by = "article_id") %>%
     mutate(source = "The Sun",
-           country = country) %>%
-    # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
-    mutate(year = ifelse("year" %in% names(data), year, "")) %>%
-    # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+           country = country)
+
+  # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
+  if (!"year" %in% colnames(df_data3)) {
+    df_data3 <- df_data3 %>%
+      mutate(year = NA)
+  }
+
+  # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+  df_data4 <- df_data3 %>%
     mutate(year = gsub("cembre ([1-9])", "écembre \\1", year),
            year = gsub("t ([1-9])", "ût \\1", year),
            year = gsub("vrier ([1-9])", "évrier \\1", year),
@@ -146,7 +152,7 @@ clean_star_rtf <- function(path_to_folder, file_name, country) {
   df_data2 <- df_data %>%
     mutate(variable =
              ifelse(data %in% c(grep("janvier [1-9]", data, value=T),
-                                grep("[1-9] f$", data, value=T),
+                                grep("[0-9] f$", data, value=T),
                                 grep("février [1-9]", data, value=T),
                                 grep("mars [1-9]", data, value=T),
                                 grep("avril [1-9]", data, value=T),
@@ -158,7 +164,7 @@ clean_star_rtf <- function(path_to_folder, file_name, country) {
                                 grep("septembre [1-9]", data, value=T),
                                 grep("octobre [1-9]", data, value=T),
                                 grep("novembre [1-9]", data, value=T),
-                                grep("[1-9] d$", data, value=T),
+                                grep("[0-9] d$", data, value=T),
                                 grep("décembre [1-9]", data, value=T)), "date",
                     ifelse(grepl("mots", data), "words",
                            ifelse(data %in% c(grep("^t [1-9]", data, value=T),
@@ -213,10 +219,16 @@ clean_star_rtf <- function(path_to_folder, file_name, country) {
     # On ajoute l'indication des opinions
     left_join(opinions, by = "article_id") %>%
     mutate(source = "Toronto Star",
-           country = country) %>%
-    # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
-    mutate(year = ifelse("year" %in% names(data), year, "")) %>%
-    # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+           country = country)
+
+  # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
+  if (!"year" %in% colnames(df_data3)) {
+    df_data3 <- df_data3 %>%
+      mutate(year = NA)
+  }
+
+  # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+  df_data4 <- df_data3 %>%
     mutate(year = gsub("cembre ([1-9])", "écembre \\1", year),
            year = gsub("t ([1-9])", "ût \\1", year),
            year = gsub("vrier ([1-9])", "évrier \\1", year),
@@ -264,7 +276,7 @@ clean_globe_rtf <- function(path_to_folder, file_name, country) {
   df_data2 <- df_data %>%
     mutate(variable =
              ifelse(data %in% c(grep("janvier [1-9]", data, value=T),
-                                grep("[1-9] f$", data, value=T),
+                                grep("[0-9] f$", data, value=T),
                                 grep("février [1-9]", data, value=T),
                                 grep("mars [1-9]", data, value=T),
                                 grep("avril [1-9]", data, value=T),
@@ -276,7 +288,7 @@ clean_globe_rtf <- function(path_to_folder, file_name, country) {
                                 grep("septembre [1-9]", data, value=T),
                                 grep("octobre [1-9]", data, value=T),
                                 grep("novembre [1-9]", data, value=T),
-                                grep("[1-9] d$", data, value=T),
+                                grep("[0-9] d$", data, value=T),
                                 grep("décembre [1-9]", data, value=T)), "date",
                     ifelse(grepl("mots", data), "words",
                            ifelse(data %in% c(grep("^t [1-9]", data, value=T),
@@ -330,10 +342,16 @@ clean_globe_rtf <- function(path_to_folder, file_name, country) {
     # On ajoute l'indication des opinions
     left_join(opinions, by = "article_id") %>%
     mutate(source = "The Globe and Mail",
-           country = country) %>%
-    # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
-    mutate(year = ifelse("year" %in% names(data), year, "")) %>%
-    # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+           country = country)
+
+  # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
+  if (!"year" %in% colnames(df_data3)) {
+    df_data3 <- df_data3 %>%
+      mutate(year = NA)
+  }
+
+  # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+  df_data4 <- df_data3 %>%
     mutate(year = gsub("cembre ([1-9])", "écembre \\1", year),
            year = gsub("t ([1-9])", "ût \\1", year),
            year = gsub("vrier ([1-9])", "évrier \\1", year),
@@ -366,9 +384,9 @@ clean_globe_rtf <- function(path_to_folder, file_name, country) {
 clean_gardian_rtf <- function(path_to_folder, file_name, country) {
 
   # Décommenter ces lignes juste pour tester l'intérieur de la fonction
-  # path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-Guardian-Syrie"
-  # file_name <- "UK-Guardian-Syrie-11.rtf"
-  # country = "Syrie"
+  path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-Guardian-Syrie"
+  file_name <- "UK-Guardian-Syrie-8.rtf"
+  country = "Syrie"
 
   path <- file.path(path_to_folder, file_name)
 
@@ -380,7 +398,7 @@ clean_gardian_rtf <- function(path_to_folder, file_name, country) {
   df_data2 <- df_data %>%
     mutate(variable =
              ifelse(data %in% c(grep("janvier [1-9]", data, value=T),
-                                grep("[1-9] f$", data, value=T),
+                                grep("[0-9] f$", data, value=T),
                                 grep("février [1-9]", data, value=T),
                                 grep("mars [1-9]", data, value=T),
                                 grep("avril [1-9]", data, value=T),
@@ -392,7 +410,7 @@ clean_gardian_rtf <- function(path_to_folder, file_name, country) {
                                 grep("septembre [1-9]", data, value=T),
                                 grep("octobre [1-9]", data, value=T),
                                 grep("novembre [1-9]", data, value=T),
-                                grep("[1-9] d$", data, value=T),
+                                grep("[0-9] d$", data, value=T),
                                 grep("décembre [1-9]", data, value=T)), "date",
                     ifelse(grepl("mots", data), "words",
                            ifelse(data %in% c(grep("^t [1-9]", data, value=T),
@@ -446,10 +464,16 @@ clean_gardian_rtf <- function(path_to_folder, file_name, country) {
     # On ajoute l'indication des opinions
     left_join(opinions, by = "article_id") %>%
     mutate(source = "The Gardian",
-           country = country) %>%
+           country = country)
+
     # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
-    mutate(year = ifelse("year" %in% names(data), year, "")) %>%
+    if (!"year" %in% colnames(df_data3)) {
+      df_data3 <- df_data3 %>%
+        mutate(year = NA)
+    }
+
     # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+  df_data4 <- df_data3 %>%
     mutate(year = gsub("cembre ([1-9])", "écembre \\1", year),
            year = gsub("t ([1-9])", "ût \\1", year),
            year = gsub("vrier ([1-9])", "évrier \\1", year),
@@ -497,7 +521,7 @@ clean_nyt_rtf <- function(path_to_folder, file_name, country) {
   df_data2 <- df_data %>%
     mutate(variable =
              ifelse(data %in% c(grep("janvier [1-9]", data, value=T),
-                                grep("[1-9] f$", data, value=T),
+                                grep("[0-9] f$", data, value=T),
                                 grep("février [1-9]", data, value=T),
                                 grep("mars [1-9]", data, value=T),
                                 grep("avril [1-9]", data, value=T),
@@ -509,7 +533,7 @@ clean_nyt_rtf <- function(path_to_folder, file_name, country) {
                                 grep("septembre [1-9]", data, value=T),
                                 grep("octobre [1-9]", data, value=T),
                                 grep("novembre [1-9]", data, value=T),
-                                grep("[1-9] d$", data, value=T),
+                                grep("[0-9] d$", data, value=T),
                                 grep("décembre [1-9]", data, value=T)), "date",
                     ifelse(grepl("mots", data), "words",
                            ifelse(data %in% c(grep("^t [1-9]", data, value=T),
@@ -563,10 +587,16 @@ clean_nyt_rtf <- function(path_to_folder, file_name, country) {
     # On ajoute l'indication des opinions
     left_join(opinions, by = "article_id") %>%
     mutate(source = "The New York Times",
-           country = country) %>%
-    # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
-    mutate(year = ifelse("year" %in% names(data), year, "")) %>%
-    # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+           country = country)
+
+  # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
+  if (!"year" %in% colnames(df_data3)) {
+    df_data3 <- df_data3 %>%
+      mutate(year = NA)
+  }
+
+  # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+  df_data4 <- df_data3 %>%
     mutate(year = gsub("cembre ([1-9])", "écembre \\1", year),
            year = gsub("t ([1-9])", "ût \\1", year),
            year = gsub("vrier ([1-9])", "évrier \\1", year),
@@ -615,7 +645,7 @@ clean_timesUK_rtf <- function(path_to_folder, file_name, country) {
   df_data2 <- df_data %>%
     mutate(variable =
              ifelse(data %in% c(grep("janvier [1-9]", data, value=T),
-                                grep("[1-9] f$", data, value=T),
+                                grep("[0-9] f$", data, value=T),
                                 grep("février [1-9]", data, value=T),
                                 grep("mars [1-9]", data, value=T),
                                 grep("avril [1-9]", data, value=T),
@@ -627,7 +657,7 @@ clean_timesUK_rtf <- function(path_to_folder, file_name, country) {
                                 grep("septembre [1-9]", data, value=T),
                                 grep("octobre [1-9]", data, value=T),
                                 grep("novembre [1-9]", data, value=T),
-                                grep("[1-9] d$", data, value=T),
+                                grep("[0-9] d$", data, value=T),
                                 grep("décembre [1-9]", data, value=T)), "date",
                     ifelse(grepl("mots", data), "words",
                            ifelse(data %in% c(grep("^t [1-9]", data, value=T),
@@ -684,9 +714,16 @@ clean_timesUK_rtf <- function(path_to_folder, file_name, country) {
     mutate(source = "The UK Times",
            country = country) %>%
     # Vérifier si les colonnes "year" et "opinion" existent et les créer si elles n'existent pas
-    mutate(year = ifelse("year" %in% names(data), year, "")) %>%
-    #    mutate(opinion = ifelse("opinion" %in% names(variable), opinion, "")) %>%
-    # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+    mutate(year = ifelse("year" %in% names(data), year, ""))
+
+  # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
+  if (!"year" %in% colnames(df_data3)) {
+    df_data3 <- df_data3 %>%
+      mutate(year = NA)
+  }
+
+  # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+  df_data4 <- df_data3 %>%
     mutate(year = gsub("cembre ([1-9])", "écembre \\1", year),
            year = gsub("t ([1-9])", "ût \\1", year),
            year = gsub("vrier ([1-9])", "évrier \\1", year),
@@ -697,7 +734,6 @@ clean_timesUK_rtf <- function(path_to_folder, file_name, country) {
     rowwise() %>%
     mutate(doc_id = gsub("Document", "", doc_id),
            date = as.Date(date, "%d %B %Y"))
-
   texts <- c()
   for(i in 1:nrow(df_data3)){
     texts[i] <- paste0(eval(parse(text = df_data3$text[i])), collapse = " ")
@@ -720,7 +756,7 @@ clean_timesUK_rtf <- function(path_to_folder, file_name, country) {
 clean_WPost_rtf <- function(path_to_folder, file_name, country) {
 
   # Décommenter ces lignes juste pour tester l'intérieur de la fonction
-   path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/US-WaPo-Syrie"
+  path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/US-WaPo-Syrie"
   file_name <- "US-WaPo-Syrie-12.rtf"
   country = "Syria"
 
@@ -800,10 +836,17 @@ clean_WPost_rtf <- function(path_to_folder, file_name, country) {
     # On ajoute l'indication des opinions
     left_join(opinions, by = "article_id") %>%
     mutate(source = "The Washington Post",
-           country = country) %>%
-    # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
-    mutate(year = ifelse("year" %in% unique(df_data2$variable), year, "")) %>%
-    # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+           country = country)
+
+
+  # Vérifier si la colonne "year" existe et la créer si elle n'existe pas
+  if (!"year" %in% colnames(df_data3)) {
+    df_data3 <- df_data3 %>%
+      mutate(year = NA)
+  }
+
+  # Modifier la colonne "year" en utilisant les gsub() que vous avez déjà définis
+  df_data4 <- df_data3 %>%
     mutate(year = gsub("cembre ([1-9])", "écembre \\1", year),
            year = gsub("t ([1-9])", "ût \\1", year),
            year = gsub("vrier ([1-9])", "évrier \\1", year),
@@ -814,6 +857,7 @@ clean_WPost_rtf <- function(path_to_folder, file_name, country) {
     rowwise() %>%
     mutate(doc_id = gsub("Document", "", doc_id),
            date = as.Date(date, "%d %B %Y"))
+
 
   texts <- c()
   for(i in 1:nrow(df_data3)){
