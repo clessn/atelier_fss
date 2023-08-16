@@ -1143,9 +1143,13 @@ graphdata_ukraine <- bind_cols(polarity_ukraine, data_ton_ukraine) %>%
          propPos = (positive/total_words_sentence)) %>%
   mutate(ton = propPos - propNeg) %>%
   mutate(country = "Ukraine") %>%
+  mutate(date = as.Date(date, format = "%Y-%m-%d")) %>%
   inner_join(nb_refugies_day, by = c("country", "date")) %>%
   mutate(date = ymd(date),
          days_since_conflict_start100 = as.numeric((date - start_date_ukraine)/100))
+
+
+      
 
 # Pour changer un DTM en format tidy, on utilise tidy() du broom package.
 data_tidy_syria <- tidy(cleanSyrie2015_corp) %>%
@@ -1183,6 +1187,7 @@ graphdata_syria <- bind_cols(polarity_syria, data_ton_syria) %>%
          propPos = (positive/total_words_sentence)) %>%
   mutate(ton = propPos - propNeg) %>%
   mutate(country = "Syria") %>%
+  mutate(date = as.Date(date, format = "%Y-%m-%d")) %>%
   inner_join(nb_refugies_day, by = c("country", "date")) %>%
   mutate(date = ymd(date),
          days_since_conflict_start100 = as.numeric((date - start_date_syria))/100)
@@ -1230,7 +1235,10 @@ stargazer(model_1, model_2, model_3, model_4,
 
 )
 
+saveRDS(reg, "_SharedFolder_article_syrie-ukraine/Data/data_descriptive.RDS")
+
 ########################################################################################################### ##
 ####################################################### FIN ##################################################
 ########################################################################################################### ##
+
 
