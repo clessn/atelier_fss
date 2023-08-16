@@ -81,7 +81,6 @@ clean_sun_rtf <- function(path_to_folder, file_name, country) {
     group_by(article_id) %>%
     summarise(opinion = max(opinion))
 
-
   library(chron)
   # Définir le format de date en français
   Sys.setlocale("LC_TIME", "fr_FR")
@@ -116,17 +115,17 @@ clean_sun_rtf <- function(path_to_folder, file_name, country) {
            date = as.Date(date, "%d %B %Y"))
 
   texts <- c()
-  for(i in 1:nrow(df_data3)){
-    texts[i] <- paste0(eval(parse(text = df_data3$text[i])), collapse = " ")
+  for(i in 1:nrow(df_data4)){
+    texts[i] <- paste0(eval(parse(text = df_data4$text[i])), collapse = " ")
     print(i)
   }
 
-  df_data3$text <- texts
+  df_data4$text <- texts
 
   # Son de victoire
   beepr::beep(5)
 
-  return(df_data3)
+  return(df_data4)
 
 }
 
@@ -241,17 +240,17 @@ clean_star_rtf <- function(path_to_folder, file_name, country) {
            date = as.Date(date, "%d %B %Y"))
 
   texts <- c()
-  for(i in 1:nrow(df_data3)){
-    texts[i] <- paste0(eval(parse(text = df_data3$text[i])), collapse = " ")
+  for(i in 1:nrow(df_data4)){
+    texts[i] <- paste0(eval(parse(text = df_data4$text[i])), collapse = " ")
     print(i)
   }
 
-  df_data3$text <- texts
+  df_data4$text <- texts
 
   # Son de victoire
   beepr::beep(5)
 
-  return(df_data3)
+  return(df_data4)
 
 }
 
@@ -364,17 +363,17 @@ clean_globe_rtf <- function(path_to_folder, file_name, country) {
            date = as.Date(date, "%d %B %Y"))
 
   texts <- c()
-  for(i in 1:nrow(df_data3)){
-    texts[i] <- paste0(eval(parse(text = df_data3$text[i])), collapse = " ")
+  for(i in 1:nrow(df_data4)){
+    texts[i] <- paste0(eval(parse(text = df_data4$text[i])), collapse = " ")
     print(i)
   }
 
-  df_data3$text <- texts
+  df_data4$text <- texts
 
   # Son de victoire
   beepr::beep(5)
 
-  return(df_data3)
+  return(df_data4)
 }
 
 ########################################################################################################### ##
@@ -384,9 +383,9 @@ clean_globe_rtf <- function(path_to_folder, file_name, country) {
 clean_gardian_rtf <- function(path_to_folder, file_name, country) {
 
   # Décommenter ces lignes juste pour tester l'intérieur de la fonction
-  path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-Guardian-Syrie"
-  file_name <- "UK-Guardian-Syrie-8.rtf"
-  country = "Syrie"
+  # path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-Guardian-Syrie"
+  # file_name <- "UK-Guardian-Syrie-8.rtf"
+  # country = "Syrie"
 
   path <- file.path(path_to_folder, file_name)
 
@@ -486,17 +485,17 @@ clean_gardian_rtf <- function(path_to_folder, file_name, country) {
            date = as.Date(date, "%d %B %Y"))
 
   texts <- c()
-  for(i in 1:nrow(df_data3)){
-    texts[i] <- paste0(eval(parse(text = df_data3$text[i])), collapse = " ")
+  for(i in 1:nrow(df_data4)){
+    texts[i] <- paste0(eval(parse(text = df_data4$text[i])), collapse = " ")
     print(i)
   }
 
-  df_data3$text <- texts
+  df_data4$text <- texts
 
   # Son de victoire
   beepr::beep(5)
 
-  return(df_data3)
+  return(df_data4)
 
 }
 
@@ -609,18 +608,17 @@ clean_nyt_rtf <- function(path_to_folder, file_name, country) {
            date = as.Date(date, "%d %B %Y"))
 
   texts <- c()
-  for(i in 1:nrow(df_data3)){
-    texts[i] <- paste0(eval(parse(text = df_data3$text[i])), collapse = " ")
+  for(i in 1:nrow(df_data4)){
+    texts[i] <- paste0(eval(parse(text = df_data4$text[i])), collapse = " ")
     print(i)
   }
 
-
-  df_data3$text <- texts
+  df_data4$text <- texts
 
   # Son de victoire
   beepr::beep(5)
 
-  return(df_data3)
+  return(df_data4)
 
 }
 
@@ -734,18 +732,19 @@ clean_timesUK_rtf <- function(path_to_folder, file_name, country) {
     rowwise() %>%
     mutate(doc_id = gsub("Document", "", doc_id),
            date = as.Date(date, "%d %B %Y"))
+
   texts <- c()
-  for(i in 1:nrow(df_data3)){
-    texts[i] <- paste0(eval(parse(text = df_data3$text[i])), collapse = " ")
+  for(i in 1:nrow(df_data4)){
+    texts[i] <- paste0(eval(parse(text = df_data4$text[i])), collapse = " ")
     print(i)
   }
 
-  df_data3$text <- texts
+  df_data4$text <- texts
 
   # Son de victoire
   beepr::beep(5)
 
-  return(df_data3)
+  return(df_data4)
 
 }
 
@@ -756,9 +755,9 @@ clean_timesUK_rtf <- function(path_to_folder, file_name, country) {
 clean_WPost_rtf <- function(path_to_folder, file_name, country) {
 
   # Décommenter ces lignes juste pour tester l'intérieur de la fonction
-  path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/US-WaPo-Syrie"
-  file_name <- "US-WaPo-Syrie-12.rtf"
-  country = "Syria"
+  # path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/US-WaPo-Syrie"
+  # file_name <- "US-WaPo-Syrie-12.rtf"
+  # country = "Syria"
 
   path <- file.path(path_to_folder, file_name)
 
@@ -858,19 +857,18 @@ clean_WPost_rtf <- function(path_to_folder, file_name, country) {
     mutate(doc_id = gsub("Document", "", doc_id),
            date = as.Date(date, "%d %B %Y"))
 
-
   texts <- c()
-  for(i in 1:nrow(df_data3)){
-    texts[i] <- paste0(eval(parse(text = df_data3$text[i])), collapse = " ")
+  for(i in 1:nrow(df_data4)){
+    texts[i] <- paste0(eval(parse(text = df_data4$text[i])), collapse = " ")
     print(i)
   }
 
-  df_data3$text <- texts
+  df_data4$text <- texts
 
   # Son de victoire
   beepr::beep(5)
 
-  return(df_data3)
+  return(df_data4)
 
 }
 
@@ -887,17 +885,17 @@ for (file_name in file_names) {
   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
   print(file_name)
 }
-#
+
 # The Sun - Ukraine ####
-file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-The-Sun")
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/UK-TheSun-Ukraine")
 for (file_name in file_names) {
-  dfi <- clean_sun_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-The-Sun",
+  dfi <- clean_sun_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/UK-TheSun-Ukraine",
                        file_name = file_name,
                        country = "Ukraine")
   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
   print(file_name)
 }
-#
+
 # Globe - Syrie ####
 file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_syrie/CA-Globe&Mail-Syrie")
 for (file_name in file_names) {
@@ -909,9 +907,9 @@ for (file_name in file_names) {
 }
 
 # Globe - Ukraine ####
-file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Globe-and-Mail")
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/CA-Globe&Mail-Ukraine")
 for (file_name in file_names) {
-  dfi <- clean_globe_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Globe-and-Mail",
+  dfi <- clean_globe_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/CA-Globe&Mail-Ukraine",
                          file_name = file_name,
                          country = "Ukraine")
   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
@@ -929,9 +927,9 @@ for (file_name in file_names) {
 }
 
 # Gardian - Ukraine ####
-file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-Guardian")
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/UK-Guardian-Ukraine")
 for (file_name in file_names) {
-  dfi <- clean_gardian_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-Guardian",
+  dfi <- clean_gardian_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/UK-Guardian-Ukraine",
                          file_name = file_name,
                          country = "Ukraine")
   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
@@ -949,9 +947,9 @@ for (file_name in file_names) {
 }
 
 # Star - Ukraine ####
-file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Toronto-Star")
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/CA-Toronto Star-Ukraine")
 for (file_name in file_names) {
-  dfi <- clean_star_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/CA-Toronto-Star",
+  dfi <- clean_star_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/CA-Toronto Star-Ukraine",
                          file_name = file_name,
                          country = "Ukraine")
   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
@@ -970,9 +968,9 @@ for (file_name in file_names) {
 }
 
 # NYT - Ukraine ####
-file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/US-New-York-Times")
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/US-NYTimes-Ukraine")
 for (file_name in file_names) {
-  dfi <- clean_nyt_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/US-New-York-Times",
+  dfi <- clean_nyt_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/US-NYTimes-Ukraine",
                        file_name = file_name,
                        country = "Ukraine")
   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
@@ -990,9 +988,9 @@ for (file_name in file_names) {
 }
 
 # Times UK - Ukraine ####
-file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-The-Times")
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/UK-The Times-Ukraine")
 for (file_name in file_names) {
-  dfi <- clean_timesUK_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/UK-The-Times",
+  dfi <- clean_timesUK_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/UK-The Times-Ukraine",
                            file_name = file_name,
                            country = "Ukraine")
   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
@@ -1010,16 +1008,16 @@ for (file_name in file_names) {
 }
 
 # WPost - Ukraine ####
-file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/new_ukraine/US-Washington-Post")
+file_names <- list.files("_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/US-WaPo-Ukraine")
 for (file_name in file_names) {
-  dfi <- clean_WPost_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/new_ukraine/US-Washington-Post",
+  dfi <- clean_WPost_rtf(path_to_folder = "_SharedFolder_article_syrie-ukraine/Data/raw_ukraine/US-WaPo-Ukraine",
                          file_name = file_name,
                          country = "Ukraine")
   saveRDS(dfi, paste0("_SharedFolder_article_syrie-ukraine/Data/clean/", file_name, ".rds"))
   print(file_name)
 }
 
-# Tout charger les CSV en même temps
+# Tout charger les RDS en même temps
  rds_all <- list.files( path = "_SharedFolder_article_syrie-ukraine/Data/clean", pattern = "*.rds", full.names = TRUE) %>%
   map_dfr(readRDS) %>%
    mutate(media_country = ifelse(source == "Toronto Star", "Canada",
