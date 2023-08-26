@@ -1,27 +1,27 @@
 {
     "id": "757C8389",
-    "path": "~/Library/CloudStorage/Dropbox/Travail/Universite_Laval/articles/article_syrie-ukraine/Code/analyse_texts.R",
+    "path": "~/Library/CloudStorage/Dropbox/Travail/Universite_Laval/publications/article_syrie-ukraine/Code/analyse_texts.R",
     "project_path": "Code/analyse_texts.R",
     "type": "r_source",
     "hash": "0",
     "contents": "",
-    "dirty": true,
+    "dirty": false,
     "created": 1691278473758.0,
     "source_on_save": false,
     "relative_order": 2,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "1234,0",
-        "scrollLine": "1213",
+        "cursorPosition": "44,0",
+        "scrollLine": "35",
         "docOutlineVisible": "1"
     },
     "folds": "",
-    "lastKnownWriteTime": 1692218772,
+    "lastKnownWriteTime": 1692636918,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1692228200060,
+    "last_content_update": 1692636918815,
     "read_only": false,
     "read_only_alternatives": []
 }

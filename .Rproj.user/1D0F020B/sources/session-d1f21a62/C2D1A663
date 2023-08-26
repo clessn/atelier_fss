@@ -1,9 +1,9 @@
 {
     "id": "C2D1A663",
-    "path": "~/Library/CloudStorage/Dropbox/Travail/Universite_Laval/articles/article_syrie-ukraine/Code/fonction.R",
+    "path": "~/Library/CloudStorage/Dropbox/Travail/Universite_Laval/publications/article_syrie-ukraine/Code/fonction.R",
     "project_path": "Code/fonction.R",
     "type": "r_source",
-    "hash": "1017035610",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1691880548119.0,
@@ -13,7 +13,7 @@
         "source_window_id": "",
         "Source": "Source",
         "cursorPosition": "865,10",
-        "scrollLine": "852",
+        "scrollLine": "0",
         "docOutlineVisible": "1"
     },
     "folds": "",
