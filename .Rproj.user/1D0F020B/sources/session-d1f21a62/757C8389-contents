@@ -50,7 +50,7 @@ data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/dataset.rds") %>%
 
 dataSyrie2015 <- data %>%
   filter(country == "Syrie") %>%
-  filter(between(date, as.Date('2015-10-01'), as.Date('2016-04-01')))# %>%
+  filter(between(date, as.Date('2011-03-15'), as.Date('2024-01-01')))# %>%
  # filter(source %in% c("The Globe and Mail", "Toronto Star"))
  # filter(opinion == 0)  %>%
 #  filter(opinion != 0)
@@ -65,7 +65,7 @@ dataSyrie2015 <- data %>%
 
 dataUkraine <- data %>%
   filter(country == "Ukraine") %>%
-  filter(between(date, as.Date('2022-03-15'), as.Date('2022-09-15')))#  %>%
+  filter(between(date, as.Date('2022-02-24'), as.Date('2024-01-01')))#  %>%
 #  filter(source %in% c("The Globe and Mail", "Toronto Star"))
   #filter(opinion == 0)
 
@@ -1208,12 +1208,12 @@ model_2 <- lm(ton ~ country + refugies1000, data = reg)
 summary(model_2)
 
 # Modèle 3
-model_3 <- lm(ton ~ country + refugies1000 + media_country, data = reg)
+model_3 <- lm(ton ~ country + refugies1000 + source, data = reg)
 summary(model_3)
 
 # Modèle 4: Juste classe
-model_4 <- lm(ton ~ country + refugies1000 + media_country +
-                total_words_day1000 + source + opinion + family_sum + men_sum + days_since_conflict_start100, data = reg)
+model_4 <- lm(ton ~ country + refugies1000 + source +
+                total_words_day1000 + opinion + family_sum + men_sum + days_since_conflict_start100, data = reg)
 summary(model_4)
 
 # Stargazer pour clusters

@@ -50,7 +50,7 @@ data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/dataset.rds") %>%
 
 dataSyrie2015 <- data %>%
   filter(country == "Syrie") %>%
-  filter(between(date, as.Date('2015-01-01'), as.Date('2015-12-31')))# %>%
+  filter(between(date, as.Date('2011-03-15'), as.Date('2024-01-01')))# %>%
  # filter(source %in% c("The Globe and Mail", "Toronto Star"))
  # filter(opinion == 0)  %>%
 #  filter(opinion != 0)
@@ -65,7 +65,7 @@ dataSyrie2015 <- data %>%
 
 dataUkraine <- data %>%
   filter(country == "Ukraine") %>%
-  filter(between(date, as.Date('2022-01-01'), as.Date('2022-12-31')))#  %>%
+  filter(between(date, as.Date('2022-02-24'), as.Date('2024-01-01')))#  %>%
 #  filter(source %in% c("The Globe and Mail", "Toronto Star"))
   #filter(opinion == 0)
 
@@ -169,7 +169,7 @@ clean_corpusEN <- function(corpus){
   corpus <- tm_map(corpus, removePunctuation, preserve_intra_word_dashes = T)
   corpus <- tm_map(corpus, removeNumbers)
  # corpus <- tm_map(corpus, stemDocument) # stemming SEULEMENT pour le topic modeling
-  corpus <- tm_map(corpus, removeWords, words = keywords)
+ # corpus <- tm_map(corpus, removeWords, words = keywords)
   corpus <- tm_map(corpus, removeWords, words = after_job_en)
   corpus <- tm_map(corpus, stripWhitespace)
   return(corpus)
@@ -276,8 +276,8 @@ plot1 <- ggplot(count1, aes(x = date, y = n)) +
   geom_line(aes(color = country), size = 1, color = "#5B9BD5") +
   scale_x_datetime("", date_labels = "%b", date_breaks = "1 month") +
   geom_vline(xintercept = as.POSIXct("2022-03-15"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
- # geom_text(x = as.POSIXct("2022-03-15"), y = max(count$n) * 1.3, label = "Migration peak", angle = 90, vjust = -0.6) +
-  scale_y_continuous(name="", breaks = c(0, 10, 20, 30, 40, 50, 60), limits = c(0, 65)) +
+ geom_text(x = as.POSIXct("2022-03-15"), y = max(count1$n) * 1.3, label = "Migration peak", angle = 90, vjust = -0.6) +
+ # scale_y_continuous(name="", breaks = c(0, 10, 20, 30, 40, 50, 60), limits = c(0, 65)) +
   theme_clean() +
   ggtitle("Ukraine (2022)") +
   theme(plot.title = element_text(size = 18),
@@ -294,13 +294,13 @@ plot1 <- ggplot(count1, aes(x = date, y = n)) +
 
 plot2 <- ggplot(count2, aes(x = date, y = n)) +
   geom_line(aes(color = country), size = 1, color = "#CC9933") +
-  scale_x_datetime("", date_labels = "%b", date_breaks = "1 month") +
-  # geom_vline(xintercept = as.POSIXct("2015-10-01"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
-  # geom_text(x = as.POSIXct("2015-10-01"), y = max(count$n) * 1.3, label = "Migration peak", angle = 90, vjust = -0.60) +
+  scale_x_datetime("", date_labels = "%Y", date_breaks = "1 year") +
+  geom_vline(xintercept = as.POSIXct("2015-10-01"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
+  geom_text(x = as.POSIXct("2015-10-01"), y = max(count2$n) * 1.3, label = "Migration peak", angle = 90, vjust = -0.60) +
   # geom_vline(xintercept = as.POSIXct("2015-09-02"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
-  # geom_text(x = as.POSIXct("2015-09-02"), y = max(count$n) * 1.26, label = "Death of Alan Kurdi", angle = 90, vjust = -0.60) +
+  # geom_text(x = as.POSIXct("2015-09-02"), y = max(count2$n) * 1.26, label = "Death of Alan Kurdi", angle = 90, vjust = -0.60) +
   # geom_vline(xintercept = as.POSIXct("2015-11-13"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
-  # geom_text(x = as.POSIXct("2015-11-13"), y = max(count$n) * 1.32, label = "Paris attacks", angle = 90, vjust = -0.60) +
+  # geom_text(x = as.POSIXct("2015-11-13"), y = max(count2$n) * 1.32, label = "Paris attacks", angle = 90, vjust = -0.60) +
   # scale_y_continuous(name="Number of articles per month\n", breaks = c(0, 10, 20, 30, 40, 50, 60), limits = c(0, 65)) +
   theme_clean() +
   ggtitle("Syria (2015)") +
@@ -1148,9 +1148,6 @@ graphdata_ukraine <- bind_cols(polarity_ukraine, data_ton_ukraine) %>%
   mutate(date = ymd(date),
          days_since_conflict_start100 = as.numeric((date - start_date_ukraine)/100))
 
-
-      
-
 # Pour changer un DTM en format tidy, on utilise tidy() du broom package.
 data_tidy_syria <- tidy(cleanSyrie2015_corp) %>%
   bind_cols(dataSyrie2015) %>%
@@ -1211,12 +1208,12 @@ model_2 <- lm(ton ~ country + refugies1000, data = reg)
 summary(model_2)
 
 # Modèle 3
-model_3 <- lm(ton ~ country + refugies1000 + media_country, data = reg)
+model_3 <- lm(ton ~ country + refugies1000 + source, data = reg)
 summary(model_3)
 
 # Modèle 4: Juste classe
-model_4 <- lm(ton ~ country + refugies1000 + media_country +
-                total_words_day1000 + source + opinion + family_sum + men_sum + days_since_conflict_start100, data = reg)
+model_4 <- lm(ton ~ country + refugies1000 + source +
+                total_words_day1000 + opinion + family_sum + men_sum + days_since_conflict_start100, data = reg)
 summary(model_4)
 
 # Stargazer pour clusters
