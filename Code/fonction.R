@@ -13,9 +13,9 @@ library(beepr)
 clean_sun_rtf <- function(path_to_folder, file_name, country) {
 
   #Décommenter ces lignes juste pour tester l'intérieur de la fonction
-  #path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-The Sun-Syrie"
-  #file_name <- "UK-The Sun-Syrie-2.rtf"
-  #country = "Syrie"
+  path_to_folder <- "_SharedFolder_article_syrie-ukraine/Data/raw_syrie/UK-The Sun-Syrie"
+  file_name <- "UK-The Sun-Syrie-2.rtf"
+  country = "Syrie"
 
   path <- file.path(path_to_folder, file_name)
 

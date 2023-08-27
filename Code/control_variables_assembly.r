@@ -27,3 +27,6 @@ unique(data_regression$media_country)
 
 data_regression_controls <- merge(data_regression, data_controls, 
                          by = "media_country", all = TRUE)
+
+saveRDS(data_regression_controls, paste0(data_path, 
+                                "control_dataset/data_regression_controls.RDS"))
