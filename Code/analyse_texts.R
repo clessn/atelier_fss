@@ -48,9 +48,9 @@ data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/dataset.rds") %>%
 ## Enregistrer le csv
 #saveRDS(data, paste0("_SharedFolder_article_syrie-ukraine/Data/", "dataset_refugees.rds"))
 
-dataSyrie2015 <- data %>%
-  filter(country == "Syrie") %>%
-  filter(between(date, as.Date('2011-03-15'), as.Date('2024-01-01')))# %>%
+dataSyrie <- data %>%
+  filter(country == "Syrie")# %>%
+ # filter(between(date, as.Date('2011-03-15'), as.Date('2024-01-01')))# %>%
  # filter(source %in% c("The Globe and Mail", "Toronto Star"))
  # filter(opinion == 0)  %>%
 #  filter(opinion != 0)
@@ -64,13 +64,15 @@ dataSyrie2015 <- data %>%
 #   filter(opinion != 0)
 
 dataUkraine <- data %>%
-  filter(country == "Ukraine") %>%
-  filter(between(date, as.Date('2022-02-24'), as.Date('2024-01-01')))#  %>%
+  filter(country == "Ukraine")# %>%
+ # filter(between(date, as.Date('2022-02-24'), as.Date('2024-01-01')))#  %>%
 #  filter(source %in% c("The Globe and Mail", "Toronto Star"))
   #filter(opinion == 0)
 
 #write_csv(dataUkraine, paste0("_SharedFolder_article_syrie-ukraine/Data/", "dataset_refugees-Ukraine.csv"))
 
+dataIraq <- data %>%
+  filter(country == "Iraq")
 
 # dataUkraine_op <- data %>%
 #   filter(country == "Ukraine") %>%
@@ -87,6 +89,9 @@ start_date_syria <- ymd("2011-03-15")
 # Date de début du conflit en Ukraine
 start_date_ukraine <- ymd("2022-02-24")
 
+# Date de début du conflit en Irak
+start_date_iraq <- ymd("2003-03-20")
+
 ########################################################################################################### ##
 ################################################# Corpus anglo ###############################################
 ########################################################################################################### ##
@@ -101,12 +106,16 @@ start_date_ukraine <- ymd("2022-02-24")
 #dataSyrie_corpus <- VCorpus(dataSyrie_source)
 
 # Syrie
-dataSyrie2015_source <- DataframeSource(dataSyrie2015)
-dataSyrie2015_corpus <- VCorpus(dataSyrie2015_source)
+dataSyrie_source <- DataframeSource(dataSyrie)
+dataSyrie_corpus <- VCorpus(dataSyrie_source)
 
 # Ukraine
 dataUkraine_source <- DataframeSource(dataUkraine)
 dataUkraine_corpus <- VCorpus(dataUkraine_source)
+
+# Iraq
+dataIraq_source <- DataframeSource(dataIraq)
+dataIraq_corpus <- VCorpus(dataIraq_source)
 
 ########################################################################################################### ##
 ################################################## Cleaning EN ###############################################
@@ -179,8 +188,10 @@ clean_corpusEN <- function(corpus){
 # Peut prendre plusieurs minutes, selon la taille du corpus
 #clean_corp <- clean_corpusEN(data_corpus)
 #cleanSyrie_corp <- clean_corpusEN(dataSyrie_corpus)
-cleanSyrie2015_corp <- clean_corpusEN(dataSyrie2015_corpus)
+cleanSyrie_corp <- clean_corpusEN(dataSyrie_corpus)
 cleanUkraine_corp <- clean_corpusEN(dataUkraine_corpus)
+cleanIraq_corp <- clean_corpusEN(dataIraq_corpus)
+
 
 # Vérifier un texte nettoyé
 # content(clean_corpEN[[12]])
@@ -203,9 +214,12 @@ cleanUkraine_corp <- clean_corpusEN(dataUkraine_corpus)
 
 #dataSyrie_dtm <- DocumentTermMatrix(cleanSyrie_corp)
 
-dataSyrie2015_dtm <- DocumentTermMatrix(cleanSyrie2015_corp)
+dataSyrie_dtm <- DocumentTermMatrix(cleanSyrie_corp)
 
 dataUkraine_dtm <- DocumentTermMatrix(cleanUkraine_corp)
+
+dataIraq_dtm <- DocumentTermMatrix(cleanIraq_corp)
+
 
 # On peut aussi créer une term-document matrix (notamment pour dendrogram)
 #Weed_tdmFR <- TermDocumentMatrix(clean_corpFR)
@@ -1149,8 +1163,49 @@ graphdata_ukraine <- bind_cols(polarity_ukraine, data_ton_ukraine) %>%
          days_since_conflict_start100 = as.numeric((date - start_date_ukraine)/100))
 
 # Pour changer un DTM en format tidy, on utilise tidy() du broom package.
-data_tidy_syria <- tidy(cleanSyrie2015_corp) %>%
-  bind_cols(dataSyrie2015) %>%
+data_tidy_iraq <- tidy(cleanIraq_corp) %>%
+  bind_cols(dataIraq) %>%
+  select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id, -text...10) %>%
+  rename(text = text...8) %>%
+  unnest_tokens(word, text)
+
+# Pour obtenir des %
+polarity_iraq <- data_tidy_iraq %>%
+  mutate(date = as.POSIXct(date))  %>%
+  group_by(id_sentence) %>%
+  mutate(total_words_sentence = n()) %>%
+  ungroup() %>%
+  group_by(date) %>%
+  mutate(total_words_day1000 = n()/1000)
+
+# On utilise le lexicoder anglo du package de Quanteda, qui se nomme data_dictionary_LSD2015
+data_ton_iraq <- runDictionaryFunction(dataA = polarity_iraq,
+                                          word = word,
+                                          dictionaryA = data_dictionary_LSD2015)
+
+# Iraq
+graphdata_iraq <- bind_cols(polarity_iraq, data_ton_iraq) %>%
+  mutate(family = ifelse(word %in% family, 1, 0),
+         men = ifelse(word %in% men, 1, 0)) %>%
+  group_by(id_sentence) %>%
+  mutate(family_sum = sum(family),
+         men_sum = sum(men)) %>%
+  ungroup() %>%
+  group_by(id_sentence, date, total_words_sentence, source, opinion, country, media_country, total_words_day1000, family_sum, men_sum) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive)) %>%
+  mutate(propNeg = (negative/total_words_sentence),
+         propPos = (positive/total_words_sentence)) %>%
+  mutate(ton = propPos - propNeg) %>%
+  mutate(country = "Iraq") %>%
+  mutate(date = as.Date(date, format = "%Y-%m-%d")) %>%
+ # inner_join(nb_refugies_day, by = c("country", "date")) %>%
+  mutate(date = ymd(date),
+         days_since_conflict_start100 = as.numeric((date - start_date_iraq))/100)
+
+# Pour changer un DTM en format tidy, on utilise tidy() du broom package.
+data_tidy_syria <- tidy(cleanSyrie_corp) %>%
+  bind_cols(dataSyrie) %>%
   select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id, -text...10) %>%
   rename(text = text...8) %>%
   unnest_tokens(word, text)
@@ -1166,8 +1221,8 @@ polarity_syria <- data_tidy_syria %>%
 
 # On utilise le lexicoder anglo du package de Quanteda, qui se nomme data_dictionary_LSD2015
 data_ton_syria <- runDictionaryFunction(dataA = polarity_syria,
-                                          word = word,
-                                          dictionaryA = data_dictionary_LSD2015)
+                                        word = word,
+                                        dictionaryA = data_dictionary_LSD2015)
 
 # Syria
 graphdata_syria <- bind_cols(polarity_syria, data_ton_syria) %>%
@@ -1189,18 +1244,82 @@ graphdata_syria <- bind_cols(polarity_syria, data_ton_syria) %>%
   mutate(date = ymd(date),
          days_since_conflict_start100 = as.numeric((date - start_date_syria))/100)
 
-reg <- bind_rows(graphdata_syria, graphdata_ukraine)
+reg <- bind_rows(graphdata_syria, graphdata_ukraine, graphdata_iraq) %>%
+  mutate(year = substr(date, 1, 4))
+
 
 
 # factorisé les variable pour déterminer les classes de référence
 reg$source <- factor(reg$source)
 reg <- within(reg, source <- relevel(source, ref = "The New York Times"))
 
+reg$country <- factor(reg$country)
+reg <- within(reg, country <- relevel(country, ref = "Syria"))
+
 reg$media_country <- factor(reg$media_country)
 reg <- within(reg, media_country <- relevel(media_country, ref = "Canada"))
 
 # Modèle 1
 model_1 <- lm(ton ~ country, data = reg)
+summary(model_1)
+
+# Modèle 2
+model_2 <- lm(ton ~ country + as.factor(year), data = reg)
+summary(model_2)
+
+# # Modèle 2
+# model_2 <- lm(ton ~ country + refugies1000, data = reg)
+# summary(model_2)
+#
+# # Modèle 3
+# model_3 <- lm(ton ~ country + refugies1000 + source, data = reg)
+# summary(model_3)
+
+# Modèle 4: Juste classe
+model_3 <- lm(ton ~ country + as.factor(year) + source +
+                total_words_day1000 + opinion + family_sum + men_sum + days_since_conflict_start100, data = reg)
+summary(model_3)
+
+# Stargazer pour clusters
+stargazer(model_1, model_2, model_3,
+          type = 'latex',
+
+          header=FALSE, # to get rid of r package output text
+
+          single.row = TRUE, # to put coefficients and standard errors on same line
+
+          no.space = F, # to remove the spaces after each line of coefficients
+
+          column.sep.width = "1pt", # to reduce column width
+
+          font.size = "footnotesize" # to make font size smaller
+
+)
+
+saveRDS(reg, "_SharedFolder_article_syrie-ukraine/Data/data_descriptive.RDS")
+
+
+########################################################################################################### ##
+#################################################### Models ##################################################
+########################################################################################################### ##
+
+# Pas besoin de tout rouler ci-dessus pour faire de belles régressions avec plein de contrôle!
+# la bd ci-dessous est toute prêt, roulée à partir de toutes les lignes ci-dessus.
+reg <- read_rds("_SharedFolder_article_syrie-ukraine/Data/data_descriptive.RDS") %>%
+  mutate(month = substr(date, 6, 7),
+         year = substr(date, 1, 4))
+
+
+library(rpart)
+library(rpart.plot)
+
+tree = rpart(ton ~ country  + source +
+               opinion + family_sum + men_sum
+              , data = reg, method = "anova", cp = 0.0009)
+rpart.plot(tree)
+
+# Modèle 1
+model_1 <- lm(ton ~ country*as.factor(year), data = reg)
 summary(model_1)
 
 # Modèle 2
@@ -1213,7 +1332,8 @@ summary(model_3)
 
 # Modèle 4: Juste classe
 model_4 <- lm(ton ~ country + refugies1000 + source +
-                total_words_day1000 + opinion + family_sum + men_sum + days_since_conflict_start100, data = reg)
+                total_words_day1000 + opinion + family_sum + men_sum + days_since_conflict_start100 +
+                chrpc_RCS + muspc_RCS + nrepc_RCS + info_flow_KOF + overallGlob_index_KOF + migrant_per_WDI + pop_den_WDI + pop_urb_WDI, data = reg)
 summary(model_4)
 
 # Stargazer pour clusters
@@ -1232,7 +1352,7 @@ stargazer(model_1, model_2, model_3, model_4,
 
 )
 
-saveRDS(reg, "_SharedFolder_article_syrie-ukraine/Data/data_descriptive.RDS")
+
 
 ########################################################################################################### ##
 ####################################################### FIN ##################################################
