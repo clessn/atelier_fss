@@ -17,7 +17,7 @@ library(seededlda)
 
 # 1. Loader les données des articles du Globe and Mail
 
-data <- read_rds("../Data/dataset.rds")
+data <- read_rds("_SharedFolder_article_syrie-ukraine/Data/dataset.rds")
 
 
 # DF avec juste les articles syrie

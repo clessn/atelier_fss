@@ -32,7 +32,6 @@ ggplot(df, aes(x=source, fill=country)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-library(ggplot2)
 ggplot(df, aes(x=date, y=total_words_day1000, color=country)) +
   geom_line() +
   labs(title="Coverage Over Time", x="Date", y="Total Words (normalized by 1000)") +
