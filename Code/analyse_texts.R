@@ -1,8 +1,3 @@
-########################################################################################################### ##
-################################################### Packages #################################################
-########################################################################################################### ##
-
-# Cleaning
 library(readtext)
 library(tidyverse)
 library(tidytext)
@@ -11,26 +6,9 @@ library(tm)
 library(pdftools)
 library(rebus)
 library(stringr)
-library(reshape2) # pour function acast (transformer df en matrix)
+library(reshape2)
 library(lubridate)
-# Sentiment
-library(quanteda)
-# Topic modeling
 library(topicmodels)
-# Ploting
-library(ggthemes)
-library(sp)
-library(RColorBrewer)
-library(wordcloud)
-library(viridisLite)
-library(SnowballC)
-library(plotrix)
-library(dendextend)
-library(radarchart) # pour faire des radar chart
-library(htmlwidgets) # pour enregistrer des radar chart
-library(webshot) # pour enregistrer des radar chart
-library(treemap)
-library(gridExtra)
 library(stargazer)
 
 
