@@ -1,14 +1,8 @@
-########################################################################################################### ##
-###################################################### Packages ##############################################
-########################################################################################################### ##
-
 library(striprtf)
 library(tidyverse)
 library(beepr)
 
-########################################################################################################### ##
-####################################################### The Sun ##############################################
-########################################################################################################### ##
+# ------------------------- The Sun --------------------------------------------
 
 clean_sun_rtf <- function(path_to_folder, file_name, country) {
 
@@ -121,9 +115,6 @@ clean_sun_rtf <- function(path_to_folder, file_name, country) {
   }
 
   df_data4$text <- texts
-
-  # Son de victoire
-  beepr::beep(5)
 
   return(df_data4)
 
@@ -247,9 +238,6 @@ clean_star_rtf <- function(path_to_folder, file_name, country) {
 
   df_data4$text <- texts
 
-  # Son de victoire
-  beepr::beep(5)
-
   return(df_data4)
 
 }
@@ -370,9 +358,6 @@ clean_globe_rtf <- function(path_to_folder, file_name, country) {
 
   df_data4$text <- texts
 
-  # Son de victoire
-  beepr::beep(5)
-
   return(df_data4)
 }
 
@@ -491,9 +476,6 @@ clean_gardian_rtf <- function(path_to_folder, file_name, country) {
   }
 
   df_data4$text <- texts
-
-  # Son de victoire
-  beepr::beep(5)
 
   return(df_data4)
 
@@ -614,9 +596,6 @@ clean_nyt_rtf <- function(path_to_folder, file_name, country) {
   }
 
   df_data4$text <- texts
-
-  # Son de victoire
-  beepr::beep(5)
 
   return(df_data4)
 
@@ -741,9 +720,6 @@ clean_timesUK_rtf <- function(path_to_folder, file_name, country) {
 
   df_data4$text <- texts
 
-  # Son de victoire
-  beepr::beep(5)
-
   return(df_data4)
 
 }
@@ -809,11 +785,17 @@ clean_WPost_rtf <- function(path_to_folder, file_name, country) {
 
   df_data2$article_id <- vector
 
-  opinions <- df_data2 %>%
-    mutate(opinion = ifelse(data %in% c(grep("[O]pinion", data, value=T),
-                                        grep("[O]pinions", data, value=T),
-                                        grep("[E]ditorial", data, value=T),
-                                        grep("[E]ditorials", data, value=T),
+  opinions <- df_data2 %>%decade. Philippe Corbé, a French journalist, put it in a nutshell when talking about the Ukrainian war, he said: ``We're not talking about Syrians fleeing the bombing by the Vladimir Putin-backed Syrian regime, we're talking about Europeans living in their cars that look like our cars, and just trying to save their lives''.
+
+This study compares the treatment of Syrian and Ukrainian refugees in the six most read newspapers from Canada, the United States, and the United Kingdom. The sample contains over 25 000 articles %[ADRI?] 
+collected from Factiva. First, the analysis uses a sentiment-based dictionary to analyze the nature and tone used in the articles. A tone index is calculated as the difference between the proportion of positive and negative words when speaking about Syrian or Ukrainian refugees. Second, the analysis uses an unsupervised topic modeling classification method, an algorithm built to identify topics in each journal article. This method helps to identify the issues addressed in these articles when referring to Syrian and Ukrainian migrants. These two methods combined allow for a systematic study of the sentiment conveyed by the news coverage of Syrian and Ukrainian refugees (positive or negative; hostile or empathetic). 
+
+While differences exist, we argue in this paper that the empathy of Western media was indeed asymmetric. Syrian refugees were seen more negatively and through the prism of security, while Ukrainian refugees were seen more positively and through a humanitarian prism.
+
+This paper thus fills an important gap in the literature by comparing and contrasting the media treatment of two distinct groups. It also tests a now widespread assumption about what is perceived as a more positive treatment of Ukrainian refugees. Understanding media empathy toward migrants is crucial since media, both directly and indirectly, shape public view of migrants, calls for action, and the broader policy agenda. Moreover, this study makes a methodological contribution by using Latent Dirichlet Allocation (LDA), a topic modeling method, to systematically assess the frames and the tone used to depict certain groups of migrants by the media. 
+
+\section{Media, Refugees, and Empathy}
+There is some perception that the international press treated Ukrainian refugees differently than other refugees. Early on, media and journalists appeared baffled by 
                                         grep("[C]omment", data, value=T),
                                         grep("[C]omments", data, value=T),
                                         grep("[O]p-Ed", data, value=T),
@@ -864,9 +846,6 @@ clean_WPost_rtf <- function(path_to_folder, file_name, country) {
   }
 
   df_data4$text <- texts
-
-  # Son de victoire
-  beepr::beep(5)
 
   return(df_data4)
 
