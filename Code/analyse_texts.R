@@ -316,6 +316,7 @@ plot <- grid.arrange(plot2, plot1, nrow = 1)
 ggsave("../_SharedFolder_article_syrie-ukraine/nbArticles/nbArticles-syrie-ukraine.png", plot, width = 30, height = 17, units = c("cm"))
 
 
+
 ########################################################################################################### ##
 ################################### Sentiment EN Syrie VS Ukraine ############################
 ########################################################################################################### ##
