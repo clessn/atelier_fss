@@ -10,6 +10,7 @@ library(reshape2)
 library(lubridate)
 library(topicmodels)
 library(stargazer)
+library(quanteda)
 
 
 
@@ -17,7 +18,7 @@ library(stargazer)
 ####################################################### DATA #################################################
 ########################################################################################################### ##
 
-data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/dataset.rds") %>%
+data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/analysis/dataset.rds") %>%
   unnest_sentences(text, text) %>%
   filter(grepl('refugee|refugees|migrant|migrants', text)) %>%
   ungroup() %>%
@@ -59,7 +60,7 @@ dataIraq <- data %>%
 #   filter(between(date, as.Date('2022-01-01'), as.Date('2022-12-31'))) %>%
 #   filter(opinion != 0)
 
-nb_refugies_day <- read.csv("_SharedFolder_article_syrie-ukraine/Data/nb_refugies_day.csv", sep = ";") %>%
+nb_refugies_day <- read.csv("_SharedFolder_article_syrie-ukraine/Data/analysis/nb_refugies_day.csv", sep = ";") %>%
   mutate(date = as.Date(date, format = "%Y-%m-%d"),
          refugies1000 = crossing_border/1000)
 
@@ -228,8 +229,8 @@ dataIraq_dtm <- DocumentTermMatrix(cleanIraq_corp)
 ########################################################################################################### ##
 
 # Créer la bd
-data_n <- tidy(cleanSyrie2015_corp) %>%
-  bind_cols(dataSyrie2015) %>%
+data_n <- tidy(cleanSyrie_corp) %>%
+  bind_cols(dataSyrie) %>%
   select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -text...10, -id) %>%
   rename(text = text...8) %>%
   unnest_tokens(word, text)
@@ -259,7 +260,7 @@ count1 <- dataUkraine %>%
   na.omit() %>%
   mutate(date = as.POSIXct(date))
 
-count2 <- dataSyrie2015 %>%
+count2 <- dataSyrie %>%
   group_by(date, country) %>%
   #  filter(source != "The Gardian") %>%
   summarize(n = n()) %>%
@@ -272,7 +273,7 @@ plot1 <- ggplot(count1, aes(x = date, y = n)) +
   geom_vline(xintercept = as.POSIXct("2022-03-15"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
  geom_text(x = as.POSIXct("2022-03-15"), y = max(count1$n) * 1.3, label = "Migration peak", angle = 90, vjust = -0.6) +
  # scale_y_continuous(name="", breaks = c(0, 10, 20, 30, 40, 50, 60), limits = c(0, 65)) +
-  theme_clean() +
+  theme_classic() +
   ggtitle("Ukraine (2022)") +
   theme(plot.title = element_text(size = 18),
         plot.subtitle=element_text(size = 13),
@@ -296,7 +297,7 @@ plot2 <- ggplot(count2, aes(x = date, y = n)) +
   # geom_vline(xintercept = as.POSIXct("2015-11-13"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
   # geom_text(x = as.POSIXct("2015-11-13"), y = max(count2$n) * 1.32, label = "Paris attacks", angle = 90, vjust = -0.60) +
   # scale_y_continuous(name="Number of articles per month\n", breaks = c(0, 10, 20, 30, 40, 50, 60), limits = c(0, 65)) +
-  theme_clean() +
+  theme_classic() +
   ggtitle("Syria (2015)") +
   theme(plot.title = element_text(size = 18),
         plot.subtitle=element_text(size = 13),
@@ -310,7 +311,8 @@ plot2 <- ggplot(count2, aes(x = date, y = n)) +
         panel.border = element_blank(),
         legend.margin = margin(6, 6, 6, 6))
 
-plot <- grid.arrange(plot2, plot1, nrow = 1)
+plot1
+plot2
 
 
 ggsave("../_SharedFolder_article_syrie-ukraine/nbArticles/nbArticles-syrie-ukraine.png", plot, width = 30, height = 17, units = c("cm"))
@@ -408,6 +410,11 @@ ggplot(graphdata) +
 # Chargement des bibliothèques nécessaires
 library(boot)
 
+# Création de vos données simulées (remplacez par vos propres données)
+set.seed(123) # pour la reproductibilité
+ton_syriens <- rnorm(100, mean = 0.2, sd = 0.1) # Ton pour les réfugiés syriens
+ton_ukrainiens <- rnorm(100, mean = 0.25, sd = 0.1) # Ton pour les réfugiés ukrainiens
+
 # Calcul de la différence de ton observée entre les deux groupes
 diff_observed <-  graphdata_ukraine %>%
   bind_rows(graphdata_syria) %>%
@@ -425,10 +432,7 @@ boot_results <- boot(data = data.frame(ton_syriens, ton_ukrainiens), statistic, 
 # Calcul de la p-valeur
 p_value <- sum(abs(boot_results$t) >= abs(diff_observed)) / length(boot_results$t)
 
-# Création de vos données simulées (remplacez par vos propres données)
-set.seed(123) # pour la reproductibilité
-ton_syriens <- rnorm(100, mean = 0.2, sd = 0.1) # Ton pour les réfugiés syriens
-ton_ukrainiens <- rnorm(100, mean = 0.25, sd = 0.1) # Ton pour les réfugiés ukrainiens
+
 
 # Test t de Student
 t_test <- t.test(graphdata_ukraine$diffProp, graphdata_syria$diffProp, alternative = "two.sided", var.equal = TRUE)
@@ -447,7 +451,7 @@ cat("P-valeur:", t_test$p.value, "\n")
 #   scale_x_datetime("", date_labels = "%m-%Y", date_breaks = "1 month") +
 #   # scale_color_viridis_d(labels = c("CBC", "Toronto Star"),
 #   #                       limits = c("CBC", "TStar")) +
-#   theme_clean() +
+#   theme_classic() +
 #   # labs(title = "Évolution du ton des articles sur le cannabis dans les médias anglophones (1985 à 2019)",
 #   #      # subtitle = "Version 1: aucune pondération.",
 #   #      subtitle = "",
@@ -481,8 +485,8 @@ runDictionaryFunction <- function(corpusA, dataA, word, dfmA, dataB, dictionaryA
 }
 
 # Pour changer un DTM en format tidy, on utilise tidy() du broom package.
-data_tidy <- tidy(cleanSyrie2015_corp) %>%
-  bind_cols(dataSyrie2015) %>%
+data_tidy <- tidy(cleanSyrie_corp) %>%
+  bind_cols(dataSyrie) %>%
   select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id, -text...10) %>%
   rename(text = text...8) %>%
   unnest_tokens(word, text)
@@ -565,7 +569,7 @@ ggplot(graphdata) +
 #   scale_x_datetime("", date_labels = "%m-%Y", date_breaks = "1 month") +
 #   # scale_color_viridis_d(labels = c("CBC", "Toronto Star"),
 #   #                       limits = c("CBC", "TStar")) +
-#   theme_clean() +
+#   theme_classic() +
 #   # labs(title = "Évolution du ton des articles sur le cannabis dans les médias anglophones (1985 à 2019)",
 #   #      # subtitle = "Version 1: aucune pondération.",
 #   #      subtitle = "",
@@ -683,7 +687,7 @@ ggplot(graphdata) +
 #   scale_x_datetime("", date_labels = "%m-%Y", date_breaks = "1 month") +
 #   # scale_color_viridis_d(labels = c("CBC", "Toronto Star"),
 #   #                       limits = c("CBC", "TStar")) +
-#   theme_clean() +
+#   theme_classic() +
 #   # labs(title = "Évolution du ton des articles sur le cannabis dans les médias anglophones (1985 à 2019)",
 #   #      # subtitle = "Version 1: aucune pondération.",
 #   #      subtitle = "",
@@ -715,7 +719,7 @@ days <- seq(1, 365)
 date <- as.Date(days, origin = "2014-12-31")
 dates_syria <- data.frame(date)
 
-timeSeries_syrie <- graphdata_Syrie %>%
+timeSeries_syrie <- graphdata_Syria %>%
   mutate(date = as.Date(date)) %>%
   select(date, diffProp) %>%
   full_join(dates_syria, by = "date") %>%
@@ -739,14 +743,13 @@ timeSeries <- timeSeries_syrie %>%
 aov_result <- aov(diffProp ~ date, data = timeSeries)
 summary(aov_result)
 
-timeSeries_graph <- dates_ukraine %>%
-  bind_cols(timeSeries_syrie) %>%
-  select(-date...2, date = date...1) %>%
+timeSeries_graph <- full_join(dates_ukraine, timeSeries_syrie, by = "date") %>%
   bind_rows(timeSeries_ukraine) %>%
   mutate(date = as.POSIXct(date, format = "%m-%d")) %>%
   na.omit() %>%
   group_by(country) %>%
   mutate(mean = mean(diffProp))
+
 
 
 # On plot
@@ -758,7 +761,7 @@ ggplot(timeSeries_graph, aes(x = date, y = diffProp, color = country)) +
   scale_x_datetime("", date_labels = "%d-%m", date_breaks = "1 month") +
   # scale_color_viridis_d(labels = c("CBC", "Toronto Star"),
   #                       limits = c("CBC", "TStar")) +
-  theme_clean() +
+  theme_classic() +
   # labs(title = "Évolution du ton des articles sur le cannabis dans les médias anglophones (1985 à 2019)",
   #      # subtitle = "Version 1: aucune pondération.",
   #      subtitle = "",
@@ -784,7 +787,7 @@ ggsave("../_SharedFolder_article_syrie-ukraine/_v2/timeSeries/time-series.png", 
 ########################################################################################################### ##
 
 # Pour changer un DTM en format tidy, on utilise tidy() du broom package.
-syrie_tidy <- tidy(dataSyrie2015_dtm)
+syrie_tidy <- tidy(dataSyrie_dtm)
 
 # Sortir le dictiononaire
 nrc <- get_sentiments("nrc")
@@ -805,7 +808,7 @@ ggplot(syrie_nrc, aes(x = sentiment, y = total_count)) +
 
 syrie_nrc_time <- syrie_tidy %>%
   rename(doc_id = document) %>%
-  left_join(dataSyrie2015, by = "doc_id") %>%
+  left_join(dataSyrie, by = "doc_id") %>%
   group_by(date) %>%
   mutate(total_words = n(),
          date = as.POSIXct(date)) %>%
@@ -866,7 +869,7 @@ plotNRC1 <- ggplot(syrie_nrc_time, aes(x = date, y = propSentiment, color = sent
                      limits = c(0, 0.26),
                      expand = c(0,0)) +
   scale_color_manual(values = c("fear" = "#FF0000", "sadness" = "#0000FF")) +
-  theme_clean() +
+  theme_classic() +
   ggtitle("Syria (2015)") +
   theme(plot.title = element_text(size = 18),
         plot.subtitle=element_text(size = 13),
@@ -891,7 +894,7 @@ plotNRC2 <- ggplot(ukraine_nrc_time, aes(x = date, y = propSentiment, color = se
                      expand = c(0,0)) +
   scale_color_manual(values = c("fear" = "#FF0000", "sadness" = "#0000FF")) +
   scale_x_datetime("", date_labels = "%b", date_breaks = "1 month") +
-  theme_clean() +
+  theme_classic() +
   ggtitle("Ukraine (2022)") +
   theme(plot.title = element_text(size = 18),
         plot.subtitle=element_text(size = 13),
@@ -905,7 +908,8 @@ plotNRC2 <- ggplot(ukraine_nrc_time, aes(x = date, y = propSentiment, color = se
         legend.margin = margin(6, 6, 6, 6)) +
   guides(color=guide_legend(title="Sentiments"))
 
-plot <- grid.arrange(plotNRC1, plotNRC2, nrow = 1)
+plotNRC1
+plotNRC2
 
 
 ggsave("../_SharedFolder_article_syrie-ukraine/graphs/_v2/nrc/nrc-syrie-ukraine.png", plot, width = 30, height = 17, units = c("cm"))
@@ -1001,7 +1005,7 @@ ggplot(word_probs, aes(x=term2, y=beta, fill=as.factor(topic))) +
 #  scale_fill_manual(values = c("#440154FF", "#33638CFF", "#1F968BFF", "#FDE725FF")) +
   #  scale_fill_manual(values = c("#6f2194", "#9e9300", "#026629", "#002d9e", "#9e0015")) +
   #  scale_fill_manual(values = c("#9e0015", "#9e9300", "#002d9e", "#026629", "#9e4400", "#6f2194")) +
-  ggthemes::theme_clean() +
+  theme_classic() +
   theme(plot.title = element_text(hjust = -0.2, size = 16),
         plot.subtitle=element_text(size = 13),
         plot.caption = element_text(hjust = 1, size = 11),
@@ -1022,7 +1026,7 @@ ggsave("../_SharedFolder_article_syrie-ukraine/graphs/_v2/lda_syrie_2015/3k_LDAb
 # On plot (plus nice)
 word_probs2 <- tidy(lda_out, "gamma") %>%
   rename(doc_id = document) %>%
-  left_join(dataUkraine_op, by = "doc_id") %>%
+  left_join(dataUkraine, by = "doc_id") %>%
   mutate(date = as.POSIXct(date))
 
 #word_probs2$topic2 <- NA
@@ -1066,7 +1070,7 @@ ggplot(word_probs2, aes(x = date, y = gamma)) +
   # geom_text(x = as.POSIXct("2015-09-02"), y = 0.345, label = "Death of Alan Kurdi", angle = 90, vjust = -0.60, show.legend = F) +
   # geom_vline(xintercept = as.POSIXct("2015-11-13"), color = "darkgrey", size = 0.8  , linetype = "dashed") +
   # geom_text(x = as.POSIXct("2015-11-13"), y = 0.362, label = "Paris attacks", angle = 90, vjust = -0.60, show.legend = F) +
-  theme_clean() +
+  theme_classic() +
   theme(plot.title = element_text(hjust = 0.15, size = 16),
         plot.subtitle=element_text(size = 13),
         plot.caption = element_text(hjust = 1.19, size = 11),
@@ -1143,6 +1147,61 @@ graphdata_ukraine <- bind_cols(polarity_ukraine, data_ton_ukraine) %>%
   mutate(date = ymd(date),
          days_since_conflict_start100 = as.numeric((date - start_date_ukraine)/100))
 
+########################################################################################################### ##
+# --------------------------------------------- GPT ------------------------------------------------------ ##
+########################################################################################################### ##
+
+data_tidy_ukraine <- tidy(cleanUkraine_corp) %>%
+  bind_cols(dataUkraine) %>%
+  select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id) %>%
+  rename(text = text...8) %>%
+  unnest_tokens(word, text)
+
+# Calculate percentages
+polarity_Ukraine <- data_tidy_ukraine %>%
+  mutate(date = ymd(date)) %>%
+  group_by(id_sentence) %>%
+  mutate(total_words_sentence = n()) %>%
+  ungroup() %>%
+  group_by(date) %>%
+  mutate(total_words_day1000 = n()/1000)
+
+# Apply the dictionary using dfm and dfm_lookup
+tokens_ukraine <- tokens(polarity_ukraine$word)
+dfm_ukraine <- dfm(tokens_ukraine)
+dfm_ukraine_lookup <- dfm_lookup(dfm_ukraine, dictionary = data_dictionary_LSD2015)
+
+# Convert dfm lookup result back to tidy format for further analysis
+data_ton_ukraine <- convert(dfm_ukraine_lookup, to = "data.frame") %>%
+  rownames_to_column("id_sentence") %>%
+  mutate(id_sentence = as.numeric(id_sentence))
+
+# Joining polarity_syria with the dictionary results
+graphdata_ukraine <- left_join(polarity_ukraine, data_ton_ukraine, by = "id_sentence") %>%
+  mutate(family = ifelse(word %in% family, 1, 0),
+         men = ifelse(word %in% men, 1, 0)) %>%
+  group_by(id_sentence) %>%
+  mutate(family_sum = sum(family),
+         men_sum = sum(men)) %>%
+  ungroup() %>%
+  group_by(id_sentence, date, total_words_sentence, source, opinion, country, media_country, total_words_day1000, family_sum, men_sum) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive),
+            .groups = 'drop') %>%
+  mutate(propNeg = (negative / total_words_sentence),
+         propPos = (positive / total_words_sentence),
+         ton = propPos - propNeg,
+         country = "Ukraine",
+         date = as.Date(date),
+         days_since_conflict_start100 = as.numeric((date - start_date_ukraine)) / 100)
+
+# Assuming nb_refugies_day and start_date_syria are predefined and correctly formatted
+graphdata_ukraine <- left_join(graphdata_ukraine, nb_refugies_day, by = c("country", "date"))
+
+########################################################################################################### ##
+# --------------------------------------------- Iraq ----------------------------------------------------- ##
+########################################################################################################### ##
+
 # Pour changer un DTM en format tidy, on utilise tidy() du broom package.
 data_tidy_iraq <- tidy(cleanIraq_corp) %>%
   bind_cols(dataIraq) %>%
@@ -1183,6 +1242,61 @@ graphdata_iraq <- bind_cols(polarity_iraq, data_ton_iraq) %>%
  # inner_join(nb_refugies_day, by = c("country", "date")) %>%
   mutate(date = ymd(date),
          days_since_conflict_start100 = as.numeric((date - start_date_iraq))/100)
+
+########################################################################################################### ##
+## ---------- GPT --------------------------------------------------------------------------------------- ##
+########################################################################################################### ##
+
+data_tidy_iraq <- tidy(cleanIraq_corp) %>%
+  bind_cols(dataIraq) %>%
+  select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id) %>%
+  rename(text = text...8) %>%
+  unnest_tokens(word, text)
+
+# Calculate percentages
+polarity_Iraq <- data_tidy_iraq %>%
+  mutate(date = ymd(date)) %>%
+  group_by(id_sentence) %>%
+  mutate(total_words_sentence = n()) %>%
+  ungroup() %>%
+  group_by(date) %>%
+  mutate(total_words_day1000 = n()/1000)
+
+# Apply the dictionary using dfm and dfm_lookup
+tokens_iraq <- tokens(polarity_iraq$word)
+dfm_iraq <- dfm(tokens_iraq)
+dfm_iraq_lookup <- dfm_lookup(dfm_iraq, dictionary = data_dictionary_LSD2015)
+
+# Convert dfm lookup result back to tidy format for further analysis
+data_ton_iraq <- convert(dfm_iraq_lookup, to = "data.frame") %>%
+  rownames_to_column("id_sentence") %>%
+  mutate(id_sentence = as.numeric(id_sentence))
+
+# Joining polarity_syria with the dictionary results
+graphdata_iraq <- left_join(polarity_iraq, data_ton_iraq, by = "id_sentence") %>%
+  mutate(family = ifelse(word %in% family, 1, 0),
+         men = ifelse(word %in% men, 1, 0)) %>%
+  group_by(id_sentence) %>%
+  mutate(family_sum = sum(family),
+         men_sum = sum(men)) %>%
+  ungroup() %>%
+  group_by(id_sentence, date, total_words_sentence, source, opinion, country, media_country, total_words_day1000, family_sum, men_sum) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive),
+            .groups = 'drop') %>%
+  mutate(propNeg = (negative / total_words_sentence),
+         propPos = (positive / total_words_sentence),
+         ton = propPos - propNeg,
+         country = "Iraq",
+         date = as.Date(date),
+         days_since_conflict_start100 = as.numeric((date - start_date_iraq)) / 100)
+
+# Assuming nb_refugies_day and start_date_syria are predefined and correctly formatted
+graphdata_iraq <- left_join(graphdata_iraq, nb_refugies_day, by = c("country", "date"))
+
+########################################################################################################### ##
+################################################## PROBLEM ###############################################
+########################################################################################################### ##
 
 # Pour changer un DTM en format tidy, on utilise tidy() du broom package.
 data_tidy_syria <- tidy(cleanSyrie_corp) %>%
@@ -1225,10 +1339,63 @@ graphdata_syria <- bind_cols(polarity_syria, data_ton_syria) %>%
   mutate(date = ymd(date),
          days_since_conflict_start100 = as.numeric((date - start_date_syria))/100)
 
+########################################################################################################### ##
+## ---------- GPT --------------------------------------------------------------------------------------- ##
+########################################################################################################### ##
+
+data_tidy_syria <- tidy(cleanSyrie_corp) %>%
+  bind_cols(dataSyrie) %>%
+  select(-author, -datetimestamp, -description, -heading, -language, -origin, -doc_id, -id) %>%
+  rename(text = text...8) %>%
+  unnest_tokens(word, text)
+
+# Calculate percentages
+polarity_syria <- data_tidy_syria %>%
+  mutate(date = ymd(date)) %>%
+  group_by(id_sentence) %>%
+  mutate(total_words_sentence = n()) %>%
+  ungroup() %>%
+  group_by(date) %>%
+  mutate(total_words_day1000 = n()/1000)
+
+# Apply the dictionary using dfm and dfm_lookup
+tokens_syria <- tokens(polarity_syria$word)
+dfm_syria <- dfm(tokens_syria)
+dfm_syria_lookup <- dfm_lookup(dfm_syria, dictionary = data_dictionary_LSD2015)
+
+# Convert dfm lookup result back to tidy format for further analysis
+data_ton_syria <- convert(dfm_syria_lookup, to = "data.frame") %>%
+  rownames_to_column("id_sentence") %>%
+  mutate(id_sentence = as.numeric(id_sentence))
+
+# Joining polarity_syria with the dictionary results
+graphdata_syria <- left_join(polarity_syria, data_ton_syria, by = "id_sentence") %>%
+  mutate(family = ifelse(word %in% family, 1, 0),
+         men = ifelse(word %in% men, 1, 0)) %>%
+  group_by(id_sentence) %>%
+  mutate(family_sum = sum(family),
+         men_sum = sum(men)) %>%
+  ungroup() %>%
+  group_by(id_sentence, date, total_words_sentence, source, opinion, country, media_country, total_words_day1000, family_sum, men_sum) %>%
+  summarise(negative = sum(negative),
+            positive = sum(positive),
+            .groups = 'drop') %>%
+  mutate(propNeg = (negative / total_words_sentence),
+         propPos = (positive / total_words_sentence),
+         ton = propPos - propNeg,
+         country = "Syria",
+         date = as.Date(date),
+         days_since_conflict_start100 = as.numeric((date - start_date_syria)) / 100)
+
+# Assuming nb_refugies_day and start_date_syria are predefined and correctly formatted
+graphdata_syria <- left_join(graphdata_syria, nb_refugies_day, by = c("country", "date"))
+
+########################################################################################################### ##
+## ---------- GPT --------------------------------------------------------------------------------------- ##
+########################################################################################################### ##
+
 reg <- bind_rows(graphdata_syria, graphdata_ukraine, graphdata_iraq) %>%
   mutate(year = substr(date, 1, 4))
-
-
 
 # factorisé les variable pour déterminer les classes de référence
 reg$source <- factor(reg$source)
@@ -1277,7 +1444,7 @@ stargazer(model_1, model_2, model_3,
 
 )
 
-saveRDS(reg, "_SharedFolder_article_syrie-ukraine/Data/data_descriptive.RDS")
+saveRDS(reg, "_SharedFolder_article_syrie-ukraine/Data/data_pub_syrie_ukraine_80k.rds")
 
 
 ########################################################################################################### ##
@@ -1289,7 +1456,6 @@ saveRDS(reg, "_SharedFolder_article_syrie-ukraine/Data/data_descriptive.RDS")
 reg <- read_rds("_SharedFolder_article_syrie-ukraine/Data/data_descriptive.RDS") %>%
   mutate(month = substr(date, 6, 7),
          year = substr(date, 1, 4))
-
 
 library(rpart)
 library(rpart.plot)
