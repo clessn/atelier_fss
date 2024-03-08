@@ -3,9 +3,12 @@ library(dplyr)
 data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/data_pub_syrie_ukraine_tone_no_scale.rds")
 
 data <- data %>%
-  mutate(month = substr(date, 6, 7),
-         year = substr(date, 1, 4))  %>% 
-  filter(country != "Iraq")
+  mutate(month = as.integer(substr(date, 6, 7)),  # Convert month to integer for comparison
+         year = as.integer(substr(date, 1, 4))) %>%  # Convert year to integer for comparison
+  filter((country == "Syrie" & year >= 2011 & month >= 3 & year <= 2012 & month <= 3) | 
+         (country == "Iraq" & year >= 2011 & month >= 3 & year <= 2012 & month <= 3) |
+         (country == "Ukraine" & year >= 2022 & month >= 2 & year <= 2023 & month <= 2) |
+         (country == "Iraq" & year >= 2022 & month >= 2 & year <= 2023 & month <= 2))
 
 data$source <- factor(data$source)
 data <- within(data, source <- relevel(source, ref = "The New York Times"))
@@ -14,13 +17,13 @@ data$country <- factor(data$country, levels = c("Syrie", "Ukraine", "Iraq"))
 data <- within(data, country <- relevel(country, ref = "Syrie"))
 
 data$year <- factor(data$year)
-data <- within(data, year <- relevel(year, ref = "2006"))
+data <- within(data, year <- relevel(year, ref = "2012"))
 
 models <- list(
-  "Model 1" = lm(tone_index ~ country, data = data),
-  "Model 2" = lm(tone_index ~ country + year, data = data),
-  "Model 3" = lm(tone_index ~ country + source, data = data),
-  "Model 4" = lm(tone_index ~ country + year + source,  data = data)
+  "Model 1" = lm(net_sentiment_scores ~ country, data = data),
+  "Model 2" = lm(net_sentiment_scores ~ country + year, data = data),
+  "Model 3" = lm(net_sentiment_scores ~ country + source, data = data),
+  "Model 4" = lm(net_sentiment_scores ~ country + year + source,  data = data)
 )
 
 fixed_effects <- tibble::tribble(
@@ -28,7 +31,6 @@ fixed_effects <- tibble::tribble(
   "Years Fixed Effects", "", "$\\checkmark$", "", "$\\checkmark$",
   "Sources Fixed Effects", "", "", "$\\checkmark$", "$\\checkmark$"
 )
-
 
 modelsummary::modelsummary(models,
              output = "~/Dropbox/Apps/Overleaf/pub_syrie_ukraine/graphs/table.tex", 
@@ -45,6 +47,7 @@ modelsummary::modelsummary(models,
                              "men_sum" = "Sum of terms about men",
                              "days_since_conflict_start100" = "Days since conflict start"),
              add_rows = fixed_effects)
+
 
 
 

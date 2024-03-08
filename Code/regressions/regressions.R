@@ -1,6 +1,6 @@
 library(dplyr) 
 
-data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/data_pub_syrie_ukraine_80k.rds") 
+data_reg <- readRDS("_SharedFolder_article_syrie-ukraine/Data/data_pub_syrie_ukraine_80k.rds") 
 
 data <- data %>%
   mutate(month = substr(date, 6, 7),
