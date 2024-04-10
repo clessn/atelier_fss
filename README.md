@@ -42,6 +42,8 @@ git clone https://github.com/clessn/analyse_textuelle_atelier_fss.git
 Le dépôt GitHub contient les dossiers et fichiers suivants :
 
 `data/` : Dossier pour stocker les jeux de données, les résultats intermédiaires et les graphiques.
+
+
 `code/` : Contient tous les scripts R nécessaires à l'exécution du projet.
 
 Assurez-vous de maintenir cette structure pour le bon fonctionnement des scripts.
