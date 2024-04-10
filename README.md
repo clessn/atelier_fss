@@ -17,6 +17,26 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants :
     install.packages("modelsummary")
 ```
 
+## Téléchargement et Ouverture du Projet
+
+Pour télécharger et commencer à travailler sur ce projet dans RStudio, suivez ces étapes :
+
+1. Télécharger le projet : Rendez-vous sur la page GitHub du projet et cliquez sur le bouton Code, puis sélectionnez Download ZIP. Cela téléchargera une archive du projet sur votre ordinateur.
+2. Extraire le projet : Localisez le fichier ZIP téléchargé et extrayez-le dans le dossier de votre choix.
+3. Ouvrir le projet dans RStudio : Ouvrez RStudio, puis allez dans File > Open Project... et naviguez jusqu'au dossier extrait. Sélectionnez le fichier .Rproj pour ouvrir le projet. Vous pouvez aussi simplement double-cliquer sur le fichier .Rproj pour ouvrir le projet directement dans RStudio.
+
+## Pour les plus aventuriers : Clonage du Projet
+
+Si vous êtes familier avec Git et GitHub, vous pouvez également cloner le projet directement sur votre ordinateur. Voici comment procéder :
+
+1. Cloner le projet : Ouvrez Git Bash ou un terminal de votre choix et exécutez la commande suivante pour cloner le projet sur votre ordinateur :
+
+```bash
+git clone https://github.com/clessn/analyse_textuelle_atelier_fss.git
+```
+
+2. Ouvrir le projet dans RStudio : Ouvrez RStudio, puis allez dans File > Open Project... et naviguez jusqu'au dossier cloné. Sélectionnez le fichier .Rproj pour ouvrir le projet. Vous pouvez aussi simplement double-cliquer sur le fichier .Rproj pour ouvrir le projet directement dans RStudio.
+
 ### Structure du projet
 
 Le dépôt GitHub contient les dossiers et fichiers suivants :
@@ -34,7 +54,7 @@ Ouvrez et exécutez le script `code/lsd/lsd_prep.R` dans RStudio. Ce script trai
 
 Une fois le script exécuté, un fichier data_prepped.rds sera créé dans le dossier data/, contenant les données préparées.
 
-Étape 2 : Analyse de sentiment avec le Lexicoder
+## Étape 2 : Analyse de sentiment avec le Lexicoder
 
 Le script `code/lsd/lsd_analysis.R` utilise le Lexicoder Sentiment Dictionary pour évaluer le sentiment du texte.
 
@@ -42,21 +62,21 @@ Assurez-vous que le fichier data_prepped.rds est présent dans le dossier data/.
 Exécutez le script `code/lsd/lsd_analysis.R`. Il lira les données préparées, les analysera à l'aide du Lexicoder, et calculera les scores de sentiment.
 Le script sauvegardera les résultats de l'analyse sentimentale dans un nouveau fichier RDS, data_analyse_textuelle.rds, dans le dossier data/.
 
-Étape 3 : Régressions
+## Étape 3 : Régressions
 
 Le script regressions.R effectue des analyses de régression pour étudier les relations entre le ton des textes et d'autres variables.
 
 Ouvrez et exécutez `code/regression/regressions.R`. Ce script nécessite le fichier data_analyse_textuelle.rds généré à l'étape précédente.
 Le script exécutera plusieurs modèles de régression et sauvegardera les tableaux de résultats sous forme de fichiers LaTeX dans le dossier data/reg_table/.
 
-Étape 4 : Génération de graphiques
+## Étape 4 : Génération de graphiques
 
 Enfin, les scripts `code/graphs/bar_graph_country_tone_index.R` et `code/graphs/time_series.R` génèrent des visualisations des analyses.
 
 Pour chaque script de graphique dans le dossier scripts/, ouvrez-le et exécutez-le dans RStudio.
 Les scripts liront les données analysées et généreront des graphiques, qui seront sauvegardés dans le dossier `data/graphs/`.
 
-Conclusion
+## Conclusion
 
 Félicitations ! Vous avez maintenant exécuté l'ensemble du processus d'analyse de sentiment et de régression. Explorez le dossier graphs/ pour visualiser les résultats et le dossier data/reg_table/ pour les tableaux de régression. N'hésitez pas à modifier les scripts et à expérimenter avec vos propres données pour explorer de nouvelles analyses.
 
