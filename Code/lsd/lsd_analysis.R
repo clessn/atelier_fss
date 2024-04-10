@@ -1,66 +1,68 @@
+# Charger les packages nécessaires pour les manipulations de données et l'analyse textuelle
 library(dplyr)
 library(quanteda)
 
+# Charger des mots vides personnalisés qui seront utilisés pour filtrer le texte
 source("data/lsd_prep_sources/custom_stopwords.R")
 
-# Load your preprocessed dataset
+# Charger le jeu de données prétraité
 data <- readRDS("data/data_prepped.rds")
 
-# Create a corpus from the preprocessed text data
+# Créer un corpus à partir des données textuelles prétraitées
 corpus_text <- corpus(data$text_prepped, docnames = data$id_sentence)
 
-# Tokenize the text
-tokens_text <- tokens(corpus_text, what = "word", remove_punct = TRUE, 
-                                                  remove_numbers = TRUE, 
-                                                  remove_symbols = TRUE)
+# Tokeniser le texte, c'est-à-dire le diviser en mots tout en supprimant la ponctuation, les nombres et les symboles
+tokens_text <- tokens(corpus_text, what = "word", remove_punct = TRUE, remove_numbers = TRUE, remove_symbols = TRUE)
 
-# Convert tokens to lowercase
+# Convertir les tokens en minuscules pour normaliser le texte
 tokens_text <- tokens_tolower(tokens_text)
 
+# Fusionner les mots vides par défaut en anglais avec des listes personnalisées
 all_stopwords <- c(stopwords("english"), stopWords_en, keywords, after_job_en)
 
-# Remove stopwords from tokens
+# Supprimer les mots vides des tokens pour se concentrer sur les mots significatifs
 tokens_text <- tokens_remove(tokens_text, pattern = all_stopwords, padding = TRUE)
 
-# Create a document-feature matrix from tokens (This is the missing step)
+# Créer une matrice document-terme à partir des tokens
 dfm_text <- dfm(tokens_text)
 
-# Load your sentiment dictionary (assuming it's already loaded as data_dictionary_LSD2015)
-# Apply the sentiment dictionary to the dfm
+# Charger le dictionnaire de sentiments LSD (supposé préalablement chargé sous le nom de data_dictionary_LSD2015)
+# Appliquer le dictionnaire de sentiments à la matrice document-terme
 sentiment <- dfm_lookup(dfm_text, dictionary = data_dictionary_LSD2015)
 
-# Calculate positive sentiment scores
+# Calculer les scores de sentiments positifs
 positive_scores <- rowSums(sentiment[, "positive"], na.rm = TRUE)
 
-# Calculate negative sentiment scores
+# Calculer les scores de sentiments négatifs
 negative_scores <- rowSums(sentiment[, "negative"], na.rm = TRUE)
 
-# Calculate the total number of words in each document after cleaning but before dictionary crossing
+# Calculer le nombre total de mots dans chaque document après le nettoyage mais avant l'application du dictionnaire
 total_words <- rowSums(dfm_text)
 
-# Calculate the proportions of positive and negative words per document
+# Calculer les proportions de mots positifs et négatifs par document
 proportion_positive <- positive_scores / total_words
 proportion_negative <- negative_scores / total_words
 
-# Calculate the tone index y as the difference between the proportions of positive and negative words
+# Calculer l'indice de tonalité comme la différence entre les proportions de mots positifs et négatifs
 tone_index <- proportion_positive - proportion_negative
 
-# Add the tone index to your dataset
+# Ajouter l'indice de tonalité à votre jeu de données
 data$tone_index <- tone_index
 
-# Calculate net sentiment scores by subtracting negative from positive scores
+# Calculer les scores de sentiment net en soustrayant les scores négatifs des scores positifs
 net_sentiment_scores <- positive_scores - negative_scores
 
 data$net_sentiment_scores <- net_sentiment_scores
 
-# Find the current min and max sentiment scores
+# Trouver les scores de sentiment minimum et maximum actuels
 min_score <- min(data$net_sentiment_scores, na.rm = TRUE)
 max_score <- max(data$net_sentiment_scores, na.rm = TRUE)
 
-# Rescale the sentiment scores to the range [-1, 1]
+# Rééchelonner les scores de sentiment dans la plage [-1, 1]
 data$net_sentiment_scores_rescaled <- 2 * ((data$net_sentiment_scores - min_score) / (max_score - min_score)) - 1
 
+# Afficher un tableau récapitulatif des pays présents dans le jeu de données (optionnel)
 table(data$country)
 
-# Save the updated dataset
+# Sauvegarder le jeu de données mis à jour
 saveRDS(data, "data/data_analyse_textuelle.rds")
