@@ -1,8 +1,8 @@
 library(dplyr)
 
-source(file = "Code/lsd_prep/LSDprep_dec2017.R")
+source(file = "data/lsd_prep_sources/LSDprep_dec2017.R")
 
-data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/analysis/dataset.rds")
+data <- readRDS("data/data.rds")
 
 data_lsd <- data  %>% 
     tidytext::unnest_sentences(text, text) %>%
@@ -20,4 +20,4 @@ data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_negation)
 data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_dict)
 data_lsd$text_prepped <- sapply(data_lsd$text_prepped, mark_proper_nouns)
 
-saveRDS(data_lsd, "_SharedFolder_article_syrie-ukraine/Data/analysis/dataset_prepped.rds")
+saveRDS(data_lsd, "data/data_prepped.rds")

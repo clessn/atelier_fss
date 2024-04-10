@@ -1,10 +1,10 @@
 library(dplyr)
 library(quanteda)
 
-source("Code/lsd_prep/custom_stopwords.R")
+source("data/lsd_prep_sources/custom_stopwords.R")
 
 # Load your preprocessed dataset
-data <- readRDS("_SharedFolder_article_syrie-ukraine/Data/analysis/dataset_prepped.rds")
+data <- readRDS("data/data_prepped.rds")
 
 # Create a corpus from the preprocessed text data
 corpus_text <- corpus(data$text_prepped, docnames = data$id_sentence)
@@ -63,4 +63,4 @@ data$net_sentiment_scores_rescaled <- 2 * ((data$net_sentiment_scores - min_scor
 table(data$country)
 
 # Save the updated dataset
-saveRDS(data, "_SharedFolder_article_syrie-ukraine/Data/data_pub_syrie_ukraine_tone_no_scale.rds")
+saveRDS(data, "data/data_analyse_textuelle.rds")

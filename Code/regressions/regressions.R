@@ -1,6 +1,6 @@
 library(dplyr) 
 
-data_reg <- readRDS("_SharedFolder_article_syrie-ukraine/Data/data_pub_syrie_ukraine_80k.rds") 
+data_reg <- readRDS("data/data_analyse_textuelle.rds") 
 
 data <- data %>%
   mutate(month = substr(date, 6, 7),
@@ -13,13 +13,13 @@ data$country <- factor(data$country, levels = c("Syria", "Ukraine", "Iraq"))
 data <- within(data, country <- relevel(country, ref = "Syria"))
 
 data$year <- factor(data$year)
-data <- within(data, year <- relevel(year, ref = "2006"))
+data <- within(data, year <- relevel(year, ref = "2007"))
 
 models <- list(
-  "Model 1" = lm(ton ~ country, data = data),
-  "Model 2" = lm(ton ~ country + year, data = data),
-  "Model 3" = lm(ton ~ country + source, data = data),
-  "Model 4" = lm(ton ~ country + year + source,  data = data)
+  "Model 1" = lm(tone_index ~ country, data = data),
+  "Model 2" = lm(tone_index ~ country + year, data = data),
+  "Model 3" = lm(tone_index ~ country + source, data = data),
+  "Model 4" = lm(tone_index ~ country + year + source,  data = data)
 )
 
 fixed_effects <- tibble::tribble(
@@ -29,7 +29,7 @@ fixed_effects <- tibble::tribble(
 )
 
 modelsummary::modelsummary(models,
-             output = "~/Dropbox/Apps/Overleaf/pub_syrie_ukraine/graphs/table.tex", 
+             output = "data/reg_table/main.tex", 
              stars = TRUE,
              coef_omit = "year|source|Intercept",  # Omit year coefficients
              gof_omit = 'DF|Deviance|AIC|BIC|Log|RMSE|R2',
