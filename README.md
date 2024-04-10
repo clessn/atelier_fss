@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Guide d'utilisation du projet d'analyse de sentiment et de régression
 
 Ce guide détaillé vous accompagne à travers les différentes étapes nécessaires à l'utilisation de ce projet GitHub, conçu pour l'analyse de sentiment et l'analyse de régression sur des données textuelles. Ce README est destiné aux débutants et explique chaque étape de manière exhaustive, depuis la préparation des données jusqu'à la visualisation des résultats.
@@ -61,3 +62,6 @@ Conclusion
 Félicitations ! Vous avez maintenant exécuté l'ensemble du processus d'analyse de sentiment et de régression. Explorez le dossier graphs/ pour visualiser les résultats et le dossier data/reg_table/ pour les tableaux de régression. N'hésitez pas à modifier les scripts et à expérimenter avec vos propres données pour explorer de nouvelles analyses.
 
 Si vous rencontrez des difficultés ou avez des questions, consultez d'abord la documentation des packages R utilisés. Pour des problèmes spécifiques au projet, n'hésitez pas à ouvrir une issue dans le dépôt GitHub.
+=======
+# analyse_textuelle_atelier_fss
+>>>>>>> 76a6ea603b50d6976f0a42152f8445fe4bb4a63c
