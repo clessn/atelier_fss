@@ -25,7 +25,7 @@ Pour télécharger et commencer à travailler sur ce projet dans RStudio, suivez
 2. Extraire le projet : Localisez le fichier ZIP téléchargé et extrayez-le dans le dossier de votre choix.
 3. Ouvrir le projet dans RStudio : Ouvrez RStudio, puis allez dans File > Open Project... et naviguez jusqu'au dossier extrait. Sélectionnez le fichier .Rproj pour ouvrir le projet. Vous pouvez aussi simplement double-cliquer sur le fichier .Rproj pour ouvrir le projet directement dans RStudio.
 
-## Pour les plus aventuriers : Clonage du Projet
+### Pour les plus aventuriers : Clonage du Projet
 
 Si vous êtes familier avec Git et GitHub, vous pouvez également cloner le projet directement sur votre ordinateur. Voici comment procéder :
 
@@ -37,7 +37,7 @@ git clone https://github.com/clessn/analyse_textuelle_atelier_fss.git
 
 2. Ouvrir le projet dans RStudio : Ouvrez RStudio, puis allez dans File > Open Project... et naviguez jusqu'au dossier cloné. Sélectionnez le fichier .Rproj pour ouvrir le projet. Vous pouvez aussi simplement double-cliquer sur le fichier .Rproj pour ouvrir le projet directement dans RStudio.
 
-### Structure du projet
+## Structure du projet
 
 Le dépôt GitHub contient les dossiers et fichiers suivants :
 
