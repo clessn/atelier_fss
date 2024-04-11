@@ -21,6 +21,9 @@ data_lsd <- data  %>%
 # Initialiser une nouvelle colonne pour stocker le texte préparé pour l'analyse LSD
 data_lsd$text_prepped <- NA
 
+# Départ du chronomètre
+start_time <- Sys.time()
+
 # Appliquer une série de fonctions de préparation du texte définies dans le script LSDprep
 data_lsd$text_prepped <- sapply(data_lsd$text, LSDprep_contr)
 data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_dict_punct)
@@ -30,6 +33,14 @@ data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_punctspace)
 data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_negation)
 data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_dict)
 data_lsd$text_prepped <- sapply(data_lsd$text_prepped, mark_proper_nouns)
+
+# Fin du chronomètre
+end_time <- Sys.time()
+
+# Calculer la durée de l'opération de préparation
+duration <- end_time - start_time
+print(duration)
+
 
 # Enregistrer le jeu de données préparé dans un fichier RDS pour une utilisation ultérieure dans l'analyse LSD
 saveRDS(data_lsd, "data/data_prepped.rds")
