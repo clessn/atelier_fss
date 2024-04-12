@@ -202,7 +202,7 @@ _privatefolder*
 # *.ps
 # *.eps
 *.pdf
-*.png
+# *.png
 
 
 ## Generated if empty string is given at "Please type another file name for output:"
@@ -434,12 +434,12 @@ TSWLatexianTemp*
 *.ppt
 
 # Images
-.png
-.jpg
-.jpeg
-.gif
-.svg
-.ico
+#.png
+#.jpg
+#.jpeg
+#.gif
+#.svg
+#.ico
 
 # .R
 .Rproj.user
