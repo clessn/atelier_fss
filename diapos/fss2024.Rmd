@@ -1,0 +1,182 @@
+---
+title: 'Analyse de données avec R (2/2)'
+author: | 
+  | Adrien Cloutier
+  | 
+  | Université Laval
+date: "12 avril 2024"
+output:
+  beamer_presentation:
+    theme: 'Madrid'
+    colortheme: 'beaver'
+header-includes:
+  - \usepackage{graphicx}
+  - |
+    \titlegraphic{
+      \includegraphics[width=6cm,keepaspectratio]{images/UL_FSS_N_d.png}\hspace*{2cm}%
+      \includegraphics[width=3cm,keepaspectratio]{images/logo_CLESSN.png}
+    }
+---
+
+
+# Introduction
+
+## Bravo d'être là!
+
+![](images/obama.png){ width=100% height=100% }
+
+
+## Plan de l'atelier
+
+9h à 12h
+
+- Qui suis-je
+- Êtes-vous quali ou quanti?
+- R et RStudio
+- Des cadeaux!
+- On ouvre le code
+
+12h à 15h
+
+- Atelier libre avec des mentors de la CLESSN
+- Exercices avec R et Datacamp
+
+# Qui suis-je?
+
+## Qui suis-je?
+
+- Doctorant en science politique (directeur: Yannick Dufresne)
+- Membre de la Chaire de leadership en enseignement des sciences sociales numériques (CLESSN)
+- Coordonnateur du Réseau francophone international en conseils scientifiques (RFICS)
+- Membre du Centre d'analyses des politiques publiques (CAPP)
+- Membre du Groupe de recherche en communication politique (GRCP)
+- Membre du Centre d'étude sur la citoyenneté démocratique (CÉCD)
+- Cocréateur de l'École interdisciplinaire outils et méthodes (EIOM)
+- Formation comme scrum master (méthode Agile: https://www.scrum.org/)
+
+## Un monde aride?
+
+![](images/dune.png){ width=100% height=100% }
+
+
+## Pourquoi suivre cet atelier?
+- Comprendre le monde autour de nous à travers des données
+- Compétences recherchées sur le marché du travail
+- Base solide pour la recherche académique
+- Comprendre la pertinence du logiciel de traitement de données R 
+- Obtenir des ressources pour dédramatiser la science des données
+
+
+# Êtes-vous quanti ou quali?
+
+## Une base scientifique commune
+
+- FLSH, FSÉ, FSS, FTSR, et plus encore.
+- La programmation ne sert pas uniquement au quantitatif
+
+## Une base scientifique commune
+
+- Mon mémoire de maitrise sur la légalisation du cannabis
+- Une étude de la portée de la littérature («scoping review»)
+- Analyse de réseaux d'acteurs
+
+![](images/9_reseau.png){ width=90% height=90% }
+
+
+## Une base scientifique commune
+
+- Mon mémoire de maitrise sur la légalisation du cannabis
+- Analyse par dictionnaire (mots positifs et mots négatifs)
+
+![](images/lexicoderTOT_1985-2019.png){ width=70% height=70% }
+
+
+## Une base scientifique commune
+
+- Mon mémoire de maitrise sur la légalisation du cannabis
+- Topic modeling (analyse textuelle automatisée)
+
+![](images/LDAbetaEN_4k.png){ width=70% height=70% }
+
+
+## Une base scientifique commune
+
+- Mon mémoire de maitrise sur la légalisation du cannabis
+- Topic modeling (analyse textuelle automatisée)
+- Évolution dans le temps des 4 thèmes générés 
+
+![](images/LDAgammaEN_4k.png){ width=70% height=70% }
+
+
+## Une base scientifique commune
+
+- Ma thèse de doctorat sur la saillance médiatique
+- Nuage de mots les plus présents dans les médias
+
+![](images/sonar.png){ width=70% height=70% }
+
+
+## École interdisciplinaire Outils & Méthodes (EIOM)
+
+- **Interdisciplinaire**
+- 5 jours, 3 crédits
+- https://eiom.ca/
+
+![](images/eiom.png){ width=100% height=100% }
+
+
+
+# R et RStudio
+
+## Programmes pour l'analyse statistique
+
+![](images/langage.png){ width=100% height=100% }
+
+## R (un langage de programmation)
+
+![](images/r.png){ width=85% height=85% }
+
+
+## R Studio/Posit (un environnement de développement)
+
+![](images/r2.png){ width=85% height=85% }
+
+
+
+
+## Chemin d'arborescence (le fameux « path »)
+
+![](images/arbo.png){ width=100% height=100% }
+
+
+
+## Vos meilleurs amis
+
+- Google
+- Stackoverflow
+- r-bloggers
+- Coursera
+- DataCamp
+- Datanovia
+- Chaines Slack _aide-métho
+- ... ChatGPT..!
+
+
+# C'est l'heure des cadeaux
+
+## Datacamp
+
+![](images/datacamp3.png){ width=100% height=100% }
+
+## Recueil de textes sur l'analyse textuelle
+
+![](images/recueil.png){ width=80% height=80% }
+
+## En résumé
+
+- Utilisez les ressources à votre disposition
+- EIOM
+- Clinique d'aide métho
+- ChatGPT
+
+# On ouvre RStudio
