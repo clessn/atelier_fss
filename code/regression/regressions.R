@@ -38,7 +38,7 @@ fixed_effects <- tibble::tribble(
 
 # Résumer les modèles et sauvegarder le tableau dans un fichier LaTeX
 modelsummary::modelsummary(models,
-             output = "data/reg_table/main.tex",  # Chemin du fichier de sortie
+             output = "data/reg_table/main.html",  # Chemin du fichier de sortie
              stars = TRUE,  # Afficher les étoiles pour les niveaux de significativité
              coef_omit = "year|source|Intercept",  # Omettre les coefficients pour l'année, la source et l'interception
              gof_omit = 'DF|Deviance|AIC|BIC|Log|RMSE|R2',  # Omettre certaines mesures de qualité d'ajustement
