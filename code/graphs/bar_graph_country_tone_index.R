@@ -1,3 +1,5 @@
+# Bienvenue dans le code
+
 # Charger les packages nécessaires pour la manipulation de données et la création de graphiques
 library(dplyr)
 library(ggplot2)
