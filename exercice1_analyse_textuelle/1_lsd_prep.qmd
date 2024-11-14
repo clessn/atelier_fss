@@ -1,0 +1,84 @@
+---
+title: "Préparation des données pour l'analyse textuelle"
+format: html
+editor: source
+---
+
+## Introduction
+
+Ce document explique étape par étape comment préparer un jeu de données pour une analyse textuelle LSD (Linguistic Sentiment Dictionary).
+
+## Chargement des packages et des scripts de préparation
+
+Tout d'abord, nous chargeons le package `dplyr` pour les manipulations de données et le script de préparation des données `LSDprep_dec2017.R`.
+
+```{r}
+library(dplyr)
+source(file = "../code/lsd_prep_sources/LSDprep_dec2017.R")
+```
+
+## Importation des données
+
+Nous lisons ensuite le fichier RDS contenant le jeu de données et l'associons à la variable `data`.
+
+```{r}
+data <- readRDS("../data/initial_data.rds")
+```
+
+## Préparation des données pour l'analyse
+
+Nous préparons les données en divisant le texte en phrases, en filtrant celles qui contiennent des mots-clés relatifs aux réfugiés et migrants, et en ajoutant un identifiant unique pour chaque phrase.
+
+```{r}
+data_lsd <- data %>%
+    tidytext::unnest_sentences(text, text) %>%
+    filter(grepl('refugee|refugees|migrant|migrants', text)) %>%
+    ungroup() %>%
+    mutate(id_sentence = row_number())
+```
+
+## Préparation du texte pour l'analyse LSD
+
+Nous créons une nouvelle colonne `text_prepped` pour stocker le texte préparé. Ensuite, nous appliquons plusieurs fonctions de nettoyage issues du script LSDprep, chacune jouant un rôle spécifique dans la normalisation du texte.
+
+```{r}
+data_lsd$text_prepped <- NA
+data_lsd$text_prepped <- sapply(data_lsd$text, LSDprep_contr)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_dict_punct)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, remove_punctuation_from_acronyms)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, remove_punctuation_from_abbreviations)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_punctspace)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_negation)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_dict)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, mark_proper_nouns)
+```
+
+## Mesure de la durée de préparation
+
+Nous enregistrons le temps de début et de fin de la préparation pour calculer la durée totale de l'opération.
+
+```{r}
+start_time <- Sys.time()
+
+# Exécution des étapes de préparation du texte
+data_lsd$text_prepped <- sapply(data_lsd$text, LSDprep_contr)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_dict_punct)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, remove_punctuation_from_acronyms)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, remove_punctuation_from_abbreviations)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_punctspace)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_negation)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, LSDprep_dict)
+data_lsd$text_prepped <- sapply(data_lsd$text_prepped, mark_proper_nouns)
+
+end_time <- Sys.time()
+duration <- end_time - start_time
+print(duration)
+```
+
+## Sauvegarde des données préparées
+
+Enfin, nous enregistrons le jeu de données préparé dans un fichier RDS pour une utilisation ultérieure.
+
+```{r}
+saveRDS(data_lsd, "../data/data_prepped.rds")
+```
