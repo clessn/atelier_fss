@@ -15,6 +15,7 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants :
     install.packages("quanteda")
     install.packages("ggplot2")
     install.packages("modelsummary")
+    install.packages("factoextra")
 ```
 
 ## Téléchargement et Ouverture du Projet
