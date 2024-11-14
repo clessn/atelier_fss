@@ -6,7 +6,7 @@ editor: source
 
 ## Introduction
 
-Ce document explique étape par étape comment préparer un jeu de données pour une analyse textuelle LSD (Linguistic Sentiment Dictionary).
+Ce document explique étape par étape comment **préparer un jeu de données** pour une analyse textuelle LSD (Linguistic Sentiment Dictionary).
 
 ## Chargement des packages et des scripts de préparation
 
@@ -22,7 +22,7 @@ source(file = "../code/lsd_prep_sources/LSDprep_dec2017.R")
 Nous lisons ensuite le fichier RDS contenant le jeu de données et l'associons à la variable `data`.
 
 ```{r}
-data <- readRDS("../data/initial_data.rds")
+data <- readRDS("../data/exercice1/initial_data.rds")
 ```
 
 ## Préparation des données pour l'analyse
@@ -80,5 +80,5 @@ print(duration)
 Enfin, nous enregistrons le jeu de données préparé dans un fichier RDS pour une utilisation ultérieure.
 
 ```{r}
-saveRDS(data_lsd, "../data/data_prepped.rds")
+saveRDS(data_lsd, "../data/exercice1/data_prepped.rds")
 ```

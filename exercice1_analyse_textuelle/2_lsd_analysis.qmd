@@ -1,0 +1,159 @@
+---
+title: "Analyse LSD"
+format: html
+editor: source
+---
+
+## Introduction
+
+Ce document présente une analyse LSD (Linguistic Sentiment Dictionary) en utilisant un jeu de données préalablement préparé.
+
+## Charger les packages nécessaires pour les manipulations de données et l'analyse textuelle
+
+```{r}
+library(dplyr)
+library(quanteda)
+```
+
+## Charger des mots vides personnalisés qui seront utilisés pour filtrer le texte
+
+```{r}
+source("../code/lsd_prep_sources/custom_stopwords.R")
+```
+
+## Charger le jeu de données prétraité
+
+```{r}
+data <- readRDS("../data/exercice1/data_prepped.rds")
+```
+
+## Créer un corpus à partir des données textuelles prétraitées
+
+```{r}
+corpus_text <- corpus(data$text_prepped, docnames = data$id_sentence)
+```
+
+## Tokeniser le texte, c'est-à-dire le diviser en mots tout en supprimant la ponctuation, les nombres et les symboles
+
+```{r}
+tokens_text <- tokens(
+  corpus_text,
+  what = "word",
+  remove_punct = TRUE,
+  remove_numbers = TRUE,
+  remove_symbols = TRUE
+  )
+```
+
+## Convertir les tokens en minuscules pour normaliser le texte
+
+```{r}
+tokens_text <- tokens_tolower(tokens_text)
+```
+
+## Fusionner les stopwords par défaut en anglais avec des listes personnalisées
+
+```{r}
+all_stopwords <- c(stopwords("english"), stopWords_en, keywords, after_job_en)
+```
+
+## Supprimer les mots vides des tokens pour se concentrer sur les mots significatifs
+
+```{r}
+tokens_text <- tokens_remove(
+  tokens_text, ## objet
+  pattern = all_stopwords, ## qu'est-ce qu'on veut enlever ("remove")?
+  padding = TRUE
+  )
+```
+
+## Créer une matrice document-terme à partir des tokens
+
+```{r}
+dfm_text <- dfm(tokens_text)
+```
+
+## Charger le dictionnaire de sentiments LSD (supposé préalablement chargé sous le nom de data_dictionary_LSD2015)
+
+## Appliquer le dictionnaire de sentiments à la matrice document-terme
+
+```{r}
+sentiment <- dfm_lookup(dfm_text, dictionary = data_dictionary_LSD2015)
+```
+
+## Calculer les scores de sentiments positifs
+
+```{r}
+positive_scores <- rowSums(sentiment[, "positive"], na.rm = TRUE)
+```
+
+## Calculer les scores de sentiments négatifs
+
+```{r}
+negative_scores <- rowSums(sentiment[, "negative"], na.rm = TRUE)
+```
+
+## Calculer le nombre total de mots dans chaque document après le nettoyage mais avant l'application du dictionnaire
+
+```{r}
+total_words <- rowSums(dfm_text)
+```
+
+## Calculer les proportions de mots positifs et négatifs par document
+
+```{r}
+proportion_positive <- positive_scores / total_words
+proportion_negative <- negative_scores / total_words
+```
+
+## Calculer l'indice de tonalité comme la différence entre les proportions de mots positifs et négatifs
+
+```{r}
+tone_index <- proportion_positive - proportion_negative
+```
+
+## Ajouter l'indice de tonalité à votre jeu de données
+
+```{r}
+data$tone_index <- tone_index
+```
+
+## Calculer les scores de sentiment net en soustrayant les scores négatifs des scores positifs
+
+```{r}
+net_sentiment_scores <- positive_scores - negative_scores
+
+data$net_sentiment_scores <- net_sentiment_scores
+```
+
+## Trouver les scores de sentiment minimum et maximum actuels
+
+```{r}
+min_score <- min(data$net_sentiment_scores, na.rm = TRUE)
+max_score <- max(data$net_sentiment_scores, na.rm = TRUE)
+```
+
+## Rééchelonner les scores de sentiment dans la plage \[-1, 1\]
+
+```{r}
+data$net_sentiment_scores_rescaled <- 2 * ((data$net_sentiment_scores - min_score) / (max_score - min_score)) - 1
+```
+
+## Faire un histogramme des scores de sentiment net
+
+```{r}
+hist(data$net_sentiment_scores)
+hist(data$net_sentiment_scores_rescaled)
+```
+
+## Afficher un tableau récapitulatif des pays présents dans le jeu de données (optionnel)
+
+```{r}
+table(data$country)
+```
+
+## Sauvegarder le jeu de données mis à jour
+
+```{r}
+saveRDS(data, "../data/exercice1/data_analyse_textuelle.rds")
+```
