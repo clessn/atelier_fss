@@ -1,13 +1,29 @@
-# Bienvenue dans le code
+---
+title: "Graphique en barres de l'indice de tonalité par pays"
+format: html
+editor: source
+---
 
-# Charger les packages nécessaires pour la manipulation de données et la création de graphiques
+## Introduction
+
+Ce document génère un graphique en barres pour représenter l'indice de tonalité par pays.
+
+## Charger les packages nécessaires pour la manipulation de données et la création de graphiques
+
+```{r}
 library(dplyr)
 library(ggplot2)
+```
 
-# Charger le jeu de données préparé pour l'analyse
-data <- readRDS("data/data_analyse_textuelle.rds")
+## Charger le jeu de données préparé pour l'analyse
 
-# Créer un graphique en barres représentant la moyenne de l'indice de tonalité par pays
+```{r}
+data <- readRDS("../data/exercice1/data_analyse_textuelle.rds")
+```
+
+## Créer un graphique en barres représentant la moyenne de l'indice de tonalité par pays
+
+```{r}
 ggplot(data, aes(x = country, y = tone_index, fill = country)) +  # Définir les variables pour l'axe des x et la couleur de remplissage des barres
   stat_summary(fun = mean, geom = "bar", na.rm = TRUE,  # Calculer et afficher la moyenne de l'indice de tonalité pour chaque pays en tant que barres
                position = position_dodge(width = 0.9), alpha = 0.7) +
@@ -23,6 +39,10 @@ ggplot(data, aes(x = country, y = tone_index, fill = country)) +  # Définir les
         axis.title.x = element_text(hjust = 0.5),  # Centrer le titre de l'axe des x
         axis.title.y = element_text(hjust = 0.5)) +  # Centrer le titre de l'axe des y
   labs(x = "Country", y = "Tone mean", title = "Tone mean by country")  # Définir les étiquettes des axes et le titre du graphique
+```
 
-# Sauvegarder le graphique en tant qu'image PNG avec des dimensions spécifiques
-ggsave("data/graphs/tone_by_country.png", width = 8, height = 6, units = "in")
+## Sauvegarder le graphique en tant qu'image PNG avec des dimensions spécifiques
+
+```{r}
+ggsave("graphs/tone_by_country.png", width = 8, height = 6, units = "in")
+```
