@@ -21,7 +21,6 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants :
   - Vous pouvez les installer en exécutant les commandes suivantes dans RStudio :
 ``` r
     install.packages("dplyr")
-    install.packages("tidytext")
     install.packages("quanteda")
     install.packages("ggplot2")
     install.packages("modelsummary")
