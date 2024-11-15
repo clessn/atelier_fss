@@ -1,0 +1,282 @@
+---
+title: "Clustering with K-Means"
+format: html
+author: "Hubert Cadieux"
+---
+
+# Intro
+
+Le **clustering K-Means** est une technique de machine learning non supervisée couramment utilisée pour regrouper des données similaires dans des clusters distincts. L’objectif principal du K-Means est de diviser les données en `k` groupes où chaque observation appartient au cluster avec la moyenne la plus proche, appelée centroïde. 
+
+Cette méthode est particulièrement utile pour explorer et analyser de grands ensembles de données en identifiant des structures cachées ou des patterns sous-jacents. En regroupant les observations, le clustering K-Means permet d’obtenir des insights sur les segments de données similaires, facilitant des applications variées, allant de la segmentation client à la détection de groupes dans des données complexes.
+
+Le K-Means est également apprécié pour sa simplicité, sa rapidité de convergence, et son efficacité sur des ensembles de données de taille modérée, ce qui en fait un choix populaire pour une première approche dans l’analyse de clustering.
+
+```{r}
+library(cluster.datasets) ## Pour les données
+library(dplyr) ## Pour la manipulation de données
+library(factoextra) ## Pour la visualisation, surtout pour trouver le nombre idéal de clusters
+library(ggplot2) ## Pour la visualisation
+library(ggrepel) ## Pour gérer les labels qui se chevauchent dans les graphiques
+```
+
+```{r}
+## Importer les données
+data(languages.spoken.europe)
+df_languages_europe <- languages.spoken.europe
+```
+
+# 2. Préparer les données pour le clustering K-means
+
+Pour pouvoir effectuer du clustering K-means, voici les critères les plus importants:
+
+*   Données numériques : K-means fonctionne avec des variables numériques. Les variables catégorielles doivent être transformées (par exemple, en utilisant des encodages numériques).
+*   Données sans valeurs manquantes : Les valeurs manquantes doivent être traitées ou imputées avant d’appliquer K-means.
+*   Échelles similaires : Les variables doivent être standardisées pour éviter que celles avec de grandes valeurs n'influencent excessivement les résultats.
+
+Dans notre cas, il faut simplement retirer la colonne `country`.
+
+```{r}
+df_languages_europe_clustering <- df_languages_europe |>
+  select(-country)
+```
+
+# 3. Identifier le nombre de clusters idéal
+
+Avant de faire notre clustering, nous devons déterminer le nombre idéal de clusters. Pour cela, nous utilisons la « méthode du coude », qui consiste à observer la somme des carrés intra-cluster (WSS) pour différents nombres de clusters. En traçant la WSS pour chaque valeur de K, on identifie le point où la réduction de la WSS ralentit, formant un « coude ». Ce point indique le nombre optimal de clusters.
+
+La méthode du coude reste un indicateur imparfait : il ne faut pas toujours choisir le nombre de clusters où la WSS est au minimum. Surtout en sciences sociales, le clustering repose aussi sur l’intuition humaine et la compréhension du contexte des données. On verra plus tard ce que je veux dire par là.
+
+***À retenir : Nous cherchons à identifier le nombre de clusters où la diminution du WSS ralentit significativement, formant un « coude ».***
+
+```{r}
+fviz_nbclust(df_languages_europe_clustering, kmeans, method = "wss")
+```
+
+On observe une diminution rapide de la WSS au fur et à mesure que `k` augmente, indiquant que les clusters deviennent plus compacts. Cependant, après un certain point (ici autour de `k = 6`), l'amélioration devient marginale. Ce "coude" dans la courbe suggère que le choix optimal pour `k` est 6, car au-delà, ajouter davantage de clusters n'améliore que très peu la compacité.
+
+Toutefois, le choix final du nombre de clusters peut aussi dépendre de l’interprétation et du contexte.
+
+# Méthode de la silhouette
+
+Nous pouvons également utiliser la méthode de la silhouette pour déterminer le nombre idéal de clusters. Cette méthode évalue la qualité de la séparation des clusters en mesurant, pour chaque observation, à quel point elle est proche des autres points de son cluster par rapport aux points des clusters voisins.
+
+En traçant le score de silhouette pour différents nombres de clusters, nous cherchons la valeur de K qui maximise ce score, indiquant ainsi des clusters bien définis et bien séparés. Plus le score est élevé, meilleure est la cohésion au sein des clusters et la séparation entre eux.
+
+***À retenir : Nous cherchons le nombre de clusters qui maximise le score de silhouette, pour obtenir des groupes bien distincts et cohérents.***
+
+```{r}
+fviz_nbclust(df_languages_europe_clustering, kmeans, method = "silhouette")
+```
+
+Interprétation : La méthode de la silhouette suggère que 7 clusters semble optimal.
+
+Bref, on pourrait viser 6 ou 7 clusters pour notre clustering K-means. Cependant, il est important de garder à l'esprit que ces méthodes ne sont que des indicateurs et que le choix final du nombre de clusters dépendra également de l'interprétation des résultats et de la pertinence des groupes identifiés.
+
+# 4. Visualisations de différentes solutions de clustering
+
+Dans cette section, nous allons explorer plusieurs options de clustering en appliquant K-means avec différents nombres de clusters (3, 6, 7, 10, etc.). Pour chaque solution, nous créerons des visualisations afin d’observer la répartition des groupes et d’identifier la structure qui semble la plus logique et informative. L'objectif est de comparer ces solutions et de choisir le nombre de clusters qui représente le mieux nos données.
+
+## Ajout de deux dimensions à nos données
+
+Pour commencer, nous allons ajouter deux nouvelles dimensions à nos données, un peu comme nous l'avons fait avec la PCA (mais ce sont deux méthodes différentes). Ces dimensions nous permettront de mieux visualiser nos groupes (clusters) en représentant nos données dans **un espace simplifié à deux dimensions**.
+
+::: {.callout-note}
+Dans cette analyse, nous utilisons le **Multidimensional Scaling (MDS)** pour projeter nos données dans un **espace à deux dimensions**. Le MDS est une technique qui réduit la complexité des données tout en conservant autant que possible les distances entre les points, ici calculées avec la distance euclidienne. En d'autres termes, même si nos données d'origine peuvent avoir de nombreuses variables, le MDS nous permet de les représenter dans un espace simplifié de deux dimensions.
+:::
+
+```{r}
+## Calcul de la distance (ici, distance euclidienne)
+distance_matrix <- dist(df_languages_europe_clustering)
+
+## MDS pour réduction à 2 dimensions
+mds_result <- cmdscale(distance_matrix, k = 2)
+
+## Ajouter les coordonnées MDS aux données
+df_languages_europe$dimension_1 <- mds_result[,1]
+df_languages_europe$dimension_2 <- mds_result[,2]
+```
+
+```{r}
+## Code pour visualiser nos observations sur ces deux dimensions
+ggplot(
+  data = df_languages_europe, # les données du graphique
+  aes(
+    x = dimension_1, # axe des x (horizontal)
+    y = dimension_2 # axe des y (vertical)
+    )
+  ) +
+  ## geom_label_repel permet de visualiser le nom des observations
+  ##  en évitant qu'elles se chevauchent.
+  ##  On indique quelle variable de notre jeu de donnés est le nom des observations
+  ##  avec aes(label = {variable})
+  geom_label_repel(aes(label = country)) +
+  theme_minimal()
+```
+
+Ensuite, nous allons assigner chaque observation à un cluster et créer une nouvelle visualisation où la couleur indiquera le cluster de chaque observation. Cela nous permettra de voir comment les groupes se distinguent dans l'espace en deux dimensions.
+
+## Essayer une solution à 3 clusters
+
+Tout d'abord, nous allons ajouter une colonne `cluster_3` à notre jeu de données original, `df_languages_europe`. Cette colonne indiquera le cluster attribué à chaque observation lorsque nous appliquons une solution K-means avec 3 clusters.
+
+```{r}
+set.seed(123)  # Pour rendre les résultats reproductibles
+kmeans_result <- kmeans(
+  df_languages_europe_clustering,
+  centers = 3, ## On fait du kmeans avec 3 centres (clusters)
+  nstart = 25)
+# Ajouter les clusters aux données d'origine
+df_languages_europe$cluster_3 <- as.factor(kmeans_result$cluster)
+table(df_languages_europe$cluster_3)
+```
+
+Donc, avec 3 clusters, nous aurions 6 observations dans le cluster 1 et 5 dans les clusters 2 et 3.
+
+On peut maintenant visualiser comment ces 3 clusters se distribuent dans notre espace à 2 dimensions:
+
+```{r}
+## Code pour visualiser nos 3 clusters sur ces deux dimensions
+ggplot(
+  data = df_languages_europe, # les données du graphique
+  aes(
+    x = dimension_1, # axe des x (horizontal)
+    y = dimension_2 # axe des y (vertical)
+    )
+  ) +
+  ## geom_label_repel permet de visualiser le nom des observations
+  ## aes(color = {variable}) nous permet d'indiquer selon quelle variable
+  ## la couleur des étiquettes va varier. Dans notre cas, elles vont varier selon
+  ## la variable `cluster_3` qui indique le cluster de l'observation dans une solution
+  ## à 3 clusters.
+  geom_label_repel(aes(label = country, color = cluster_3)) +
+  theme_minimal()
+```
+
+Le graphique ci-dessus montre que la solution à 3 clusters semble raisonnable, mais elle présente quelques limites. On observe que certains pays sont relativement proches de la frontière entre les clusters, ce qui indique une séparation moins nette.
+
+Par exemple, la Finlande n'est pas dans le même cluster que les pays scandinaves, ce qui est assez curieux. La position de la Belgique est aussi un peu curieuse, etc. On dirait que 3 clusters n'est pas suffisant pour bien capter les différents clusters.
+
+::: {.callout-note}
+RAPPEL : Les méthodes du coude et de la silhouette, vues plus haut, suggéraient que 6 ou 7 clusters pourraient être des bonnes solutions. Pourquoi ne pas les essayer?
+:::
+
+## À vous de jouer!
+
+Visualisez une solution à 6 clusters sur nos deux dimensions et interprétez-la.
+
+* Ajoutez la colonne `cluster_6` à la dataframe `df_languages_europe`
+* Faites le graphique `ggplot` pour que la couleur des pays varie selon le cluster
+
+Utilisez la cellule de code ci-dessous pour essayer!
+
+```{r}
+## Vous pouvez coder ici!
+
+
+```
+
+Est-ce que ça fait plus de sens? C’est ici que l’intuition humaine entre en jeu. Et si nous ajoutons des clusters, disons 7, qu'est-ce que cela nous apprend? Essayez-le!
+
+## Décrire nos clusters
+
+On pourrait aussi vouloir visualiser comment chaque cluster se distribue selon nos variables indépendantes, i.e. les langues parlées.
+
+Il peut également être intéressant de visualiser la répartition de chaque cluster selon nos variables indépendantes, c’est-à-dire les langues parlées.
+
+Voici comment procéder pour une solution à 3 clusters par exemple. Nous allons utiliser les fonctions `group_by` et `summarise` du package `dplyr` ainsi que `pivot_longer` du package `tidyr`.
+
+```{r}
+# Préparer les données pour visualiser la moyenne de chaque langue par cluster
+graph_data <- df_languages_europe |>
+  # Transformer les colonnes de langues en format long
+  tidyr::pivot_longer(
+    cols = c(
+      "finnish", "swedish", "danish", "norwegian", "english", "german",
+      "dutch", "flemish", "french", "italian", "spanish", "portuguese"
+    ),
+    names_to = "language",  # Nommer la colonne contenant les noms des langues
+    values_to = "percentage"  # Nommer la colonne contenant les valeurs des pourcentages
+  ) |>
+  # Grouper les données par cluster et par langue
+  group_by(cluster_3, language) |>
+  # Calculer la moyenne de chaque langue pour chaque cluster
+  summarise(mean_percentage = mean(percentage, na.rm = TRUE))  # Moyenne des pourcentages par langue et cluster
+
+# Visualiser les résultats
+ggplot(
+  graph_data,
+  aes(
+    x = tidytext::reorder_within(language, mean_percentage, cluster_3),  # Ordonner les langues dans chaque cluster
+    y = mean_percentage,
+    fill = cluster_3
+  )
+) +
+  # Inverser les axes pour une meilleure lisibilité (langues affichées verticalement)
+  coord_flip() +
+  # Créer un graphique en barres pour chaque cluster avec un panneau distinct
+  facet_wrap(~cluster_3, scales = "free_y") +
+  geom_col(show.legend = FALSE) +  # Utiliser des barres pour représenter la moyenne de chaque langue
+  tidytext::scale_x_reordered() +  # Nécessaire pour réinitialiser l'ordre dans chaque facette
+  labs(
+    title = "Distribution moyenne des langues parlées par cluster",
+    x = "Langues",
+    y = "Pourcentage moyen"
+  ) +
+  theme_minimal()
+```
+
+On peut faire la même chose pour 6 clusters (si vous avez ajouté la colonne `cluster_6` dans `df_languages_europe`)
+
+```{r}
+# Préparer les données pour visualiser la moyenne de chaque langue par cluster
+graph_data <- df_languages_europe |>
+  # Transformer les colonnes de langues en format long
+  tidyr::pivot_longer(
+    cols = c(
+      "finnish", "swedish", "danish", "norwegian", "english", "german",
+      "dutch", "flemish", "french", "italian", "spanish", "portuguese"
+    ),
+    names_to = "language",  # Nommer la colonne contenant les noms des langues
+    values_to = "percentage"  # Nommer la colonne contenant les valeurs des pourcentages
+  ) |>
+  # Grouper les données par cluster et par langue
+  group_by(cluster_6, language) |>
+  # Calculer la moyenne de chaque langue pour chaque cluster
+  summarise(mean_percentage = mean(percentage, na.rm = TRUE))  # Moyenne des pourcentages par langue et cluster
+
+# Visualiser les résultats
+ggplot(
+  graph_data,
+  aes(
+    x = tidytext::reorder_within(language, mean_percentage, cluster_6),  # Ordonner les langues dans chaque cluster
+    y = mean_percentage,
+    fill = cluster_6
+  )
+) +
+  # Inverser les axes pour une meilleure lisibilité (langues affichées verticalement)
+  coord_flip() +
+  # Créer un graphique en barres pour chaque cluster avec un panneau distinct
+  facet_wrap(~cluster_6, scales = "free_y") +
+  geom_col(show.legend = FALSE) +  # Utiliser des barres pour représenter la moyenne de chaque langue
+  tidytext::scale_x_reordered() +  # Nécessaire pour réinitialiser l'ordre dans chaque facette
+  labs(
+    title = "Distribution moyenne des langues parlées par cluster",
+    x = "Langues",
+    y = "Pourcentage moyen"
+  ) +
+  theme_minimal()
+```
+
+# Conclusion
+
+Cette analyse nous a permis d'identifier des regroupements cohérents parmi les pays européens en fonction des langues. En combinant des méthodes de réduction dimensionnelle, d'optimisation des clusters et de visualisation, nous avons pu obtenir une segmentation interprétable et pertinente pour nos données. Ce processus nous a montré l'importance de combiner des techniques quantitatives avec une interprétation nuancée pour obtenir des résultats utiles en sciences sociales.
+
+Le clustering est un outil puissant en sciences sociales, car il permet de regrouper les individus, les comportements ou les pratiques en fonction de leurs similarités. Grâce à cette approche, les chercheurs peuvent identifier des **profils types** ou des **groupes naturels** au sein de populations étudiées, révélant des patterns qui pourraient rester invisibles autrement.
+
+Une fois les clusters identifiés, ils peuvent être utilisés pour approfondir les analyses : par exemple, on peut étudier les caractéristiques spécifiques de chaque groupe, explorer les facteurs qui influencent leur formation, ou encore prédire des comportements futurs.
+
+Dans cet exemple, nous avons utilisé un jeu de données très rudimentaire de 16 observations à des fins de formation. Mais sachez que le clustering k-means fonctionne très bien sur des plus gros jeux de données!
+
+# BONUS: faire une carte des clusters
+

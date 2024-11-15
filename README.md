@@ -16,6 +16,9 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants :
     install.packages("ggplot2")
     install.packages("modelsummary")
     install.packages("factoextra")
+    install.packages("cluster.datasets") ## Ce package contient des jeux de données pertinents pour faire du clustering
+    install.packages("ggrepel") ## Pour gérer les labels qui se chevauchent dans les graphiques
+    install.packages("tidytext") ## Pour ordonner le texte sur les axes des graphiques
 ```
 
 ## Téléchargement et Ouverture du Projet

@@ -1,0 +1,124 @@
+---
+title: "Exploration PCA"
+format: html
+author: "Hubert Cadieux"
+---
+
+# Intro
+
+La **PCA (Analyse en Composantes Principales)** est un excellent outil pour explorer les données avant d'appliquer un clustering. Elle permet de réduire la complexité d'un ensemble de données en projetant les variables d'origine dans un espace de dimensions réduites, tout en conservant autant que possible la variance totale des données. En d'autres termes, la PCA aide à simplifier les données sans perdre d'informations essentielles.
+
+Cette réduction dimensionnelle permet de visualiser comment les variables interagissent et se distribuent selon différentes dimensions principales, ce qui est utile pour observer les patterns et les relations sous-jacentes entre les observations. Avant d'appliquer un clustering, la PCA peut donc révéler les groupes potentiels, ou clusters, et guider l'interprétation des résultats en montrant les similitudes et différences entre les observations dans l'espace des composantes principales.
+
+```{r}
+library(cluster.datasets) ## Pour les données
+library(dplyr) ## Pour la manipulation de données
+library(factoextra) ## Pour la PCA
+```
+
+```{r}
+## Importer les données
+data(languages.spoken.europe)
+df_languages_europe <- languages.spoken.europe
+```
+
+# 1. Explorer les données
+
+Maintenant, nous allons exécuter quelques lignes de code qui vont nous permettre de rapidement comprendre la structure de notre jeu données, `democracy_data`.
+
+```{r}
+head(df_languages_europe) ## Pour voir les 6 premières lignes de la dataframe.
+```
+
+```{r}
+names(df_languages_europe) ## Pour voir le nom de toutes les colonnes de la dataframe
+```
+
+```{r}
+dim(df_languages_europe) ## Pour voir les dimensions de la dataframe (rangées * colonnes)
+```
+
+```{r}
+dplyr::glimpse(df_languages_europe) ## Finalement, voir une autre façon de voir la structure de la dataframe
+```
+
+# 2. Préparer les données pour la PCA
+
+Pour pouvoir effectuer de la PCA, les conditions suivantes doivent être respectées:
+- **Données continues** : il faut que les variables soient numériques.
+- **Standardisation** : variables à échelle similaire pour éviter les biais.
+- **Aucune donnée manquante** : Les valeurs manquantes doivent être traitées avant la PCA.
+
+Heureusement, notre jeu de données répond à tous ces critères. Nous pouvons donc procéder directement à la PCA, en retirant simplement la colonne country.
+
+```{r}
+df_languages_europe_pca <- df_languages_europe |>
+  select(-country)
+```
+
+# 3. Exécuter et interpréter la PCA
+
+Il est maintenant temps d'exécuter la PCA! Le code est assez simple.
+
+```{r}
+# Exécuter la PCA
+pca_result <- prcomp(
+  df_languages_europe_pca, # Le jeu de données pour la PCA
+  center = TRUE, # Centre les variables en soustrayant la moyenne de chaque variable, ce qui rend les données centrées autour de 0.
+  scale = TRUE  # Standardiser les variables
+)
+
+rownames(pca_result$x) <- df_languages_europe$country ## Pour pouvoir afficher le nom des pays dans les graphiques qui suivent
+```
+
+C'est tout. Assez facile non?
+
+Mais sans interprétation ni visualisation, ça ne nous apporte pas grand-chose.
+
+```{r}
+# Visualiser les résultats avec `factoextra`
+# Variance expliquée par chaque composante
+fviz_eig(pca_result, addlabels = TRUE, ylim = c(0, 50)) +
+  labs(title = "Variance expliquée par chaque composante")
+```
+
+Le graphique ci-dessus montre la variance expliquée par chaque composante. Les deux premières composantes expliquent environ 33% de la variance totale (17.9% + 15.3%). Cela signifie qu'elles capturent une part importante de l'information des données et sont donc utiles pour la réduction dimensionnelle.
+
+```{r}
+# Visualiser les variables seulement
+fviz_pca_var(pca_result,
+             col.var = "contrib", # Colorer selon la contribution des variables
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE) +
+  labs(title = "Contribution des variables aux composantes principales")
+```
+
+Le graphique ci-dessus montre la contribution des variables aux deux premières composantes principales (Dim1 et Dim2) de l'analyse en composantes principales (PCA). Les flèches représentent chaque langue, et leur longueur indique leur importance dans la formation des axes principaux.
+
+```{r}
+# Visualiser les individus seulement
+fviz_pca_ind(pca_result,
+             col.ind = "cos2", # Colorer selon la qualité de représentation
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE) +
+  labs(title = "Projection des individus sur les composantes principales")
+
+```
+
+Le graphique ci-dessus montre la projection des pays sur les deux premières composantes principales. La couleur indique la qualité de représentation (cos²), qui mesure la fidélité de la projection sur ces deux dimensions : plus c’est proche de 1 (rouge), mieux le pays est représenté dans cet espace réduit.
+
+```{r}
+# Biplot des variables et des individus
+fviz_pca_biplot(pca_result, repel = TRUE,
+                col.var = "steelblue", # Couleur des variables
+                col.ind = "grey20") +  # Couleur des individus
+  labs(title = "Biplot des deux premières composantes principales")
+```
+
+Finalement, ce graphique montre les pays (observations) et les variables (langues) dans cet espace réduit.
+
+# Conclusion
+
+Nous avons terminé notre analyse en composantes principales (PCA), ce qui nous a permis de simplifier et de visualiser les données tout en conservant les principales variations. La PCA a révélé les variables et les observations les plus importantes dans la structuration de nos données, et a également permis d’identifier des regroupements potentiels dans un espace réduit.
+
+La PCA nous montre que certaines langues ou pays partagent des caractéristiques communes, comme les liens étroits entre le néerlandais et le flamand, ou entre les langues scandinaves. Les deux premières composantes expliquent une part significative de la variance, indiquant que ces dimensions principales capturent bien les différences majeures de notre jeu de données.
