@@ -1,0 +1,297 @@
+---
+title: Interpréter et explorer 
+subtitle: Approfondissement en analyse de données avec R
+author: Hubert Cadieux 
+institute: Université Laval
+format:
+  revealjs:
+    mermaid: 
+      theme: dark
+    theme: simple
+    logo: _SharedFolder_fss_introduction_r/img/logo_CLESSN.png
+    footer: "Analyse de données avec R"
+    transition: slide
+    transition-speed: fast
+---
+
+##
+
+![](_SharedFolder_fss_introduction_r/img/qr_code.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+## Plan de l'atelier{.smaller}
+
+### 9h à 12h 
+- Qui suis-je?
+- Êtes-vous quali ou quanti?
+- R et RStudio
+- Analyse textuelle
+- PCA et clustering
+
+### 12h à 15h
+- Atelier libre avec des mentors de la CLESSN 
+- Exercices avec R
+
+## Qui suis-je?{.smaller}
+
+- Maitrise en science politique
+- Membre de la Chaire de leadership en enseignement des sciences sociales numériques (CLESSN)
+- Membre du Centre d'analyse des politiques publiques (CAPP)
+- Membre du Groupe de recherche en communication politique (GRCP)
+- Membre du Centre d'étude sur la citoyenneté démocratique (CECD)
+- Fondateur et PDG d'O'publiq
+
+## La CLESSN{.smaller auto-animate=true}
+
+![](https://www.clessn.com/assets/img/logo-black.svg){.absolute top=330 left=630 width="30%"}
+![](_SharedFolder_fss_introduction_r/img/yaduf.png){.absolute top=750 left=0 width="35%"}
+Chaire de leadership en enseignement des sciences sociales numériques (CLESSN)
+
+
+::::{.columns}
+
+:::{.column width="50%"}
+- Titulaire: Yannick Dufresne
+:::
+
+:::{.column width="50%"}
+- Objectif: Développer des compétences en science des données pour les étudiants en sciences sociales à travers des projets de recherche et des formations
+:::
+
+::::
+
+## La CLESSN{.smaller auto-animate=true}
+
+![](https://www.clessn.com/assets/img/logo-black.svg){.absolute top=330 left=630 width="30%"}
+![](_SharedFolder_fss_introduction_r/img/yaduf.png){.absolute top=530 left=0 width="35%"}
+Chaire de leadership en enseignement des sciences sociales numériques (CLESSN)
+
+
+::::{.columns}
+
+:::{.column width="50%"}
+- Titulaire: Yannick Dufresne
+:::
+
+:::{.column width="50%"}
+- Objectif: Développer des compétences en science des données pour les étudiants en sciences sociales à travers des projets de recherche et des formations
+:::
+
+::::
+
+## La CLESSN{.smaller auto-animate=true}
+
+![](https://www.clessn.com/assets/img/logo-black.svg){.absolute top=330 left=630 width="30%"}
+![](_SharedFolder_fss_introduction_r/img/yaduf.png){.absolute top=200 left=0 width="35%"}
+Chaire de leadership en enseignement des sciences sociales numériques (CLESSN)
+
+
+::::{.columns}
+
+:::{.column width="50%"}
+- Titulaire: Yannick Dufresne
+:::
+
+:::{.column width="50%"}
+- Objectif: Développer des compétences en science des données pour les étudiants en sciences sociales à travers des projets de recherche et des formations
+:::
+
+::::
+
+## Pourquoi suivre cet atelier?{.smaller} 
+
+::::{.columns}
+
+:::{.column width="70%"}
+
+- Base solide pour la recherche académique
+
+> Permet également de comprendre la pertinence de l'utilisation d'un logiciel de traitement de données et d'obtenir des outils pour dédramatiser la science des données
+
+:::
+
+:::{.column}
+
+![](_SharedFolder_fss_introduction_r/img/science.png){.absolute top=150 left=800 width="30%"}
+:::
+
+::::
+
+## Pourquoi suivre cet atelier?{.smaller}
+
+<br><br>
+
+### Comprendre le monde autour de nous à travers des données
+
+<br><br>
+
+![](_SharedFolder_fss_introduction_r/img/binoculars.png){.absolute top=430 left=600 width="10%"} 
+
+![](_SharedFolder_fss_introduction_r/img/citizen.jpg){.absolute top=470 left=470 width="10%"}
+
+![](https://www.centreofexcellence.com/media/image/e7/20/93be988955e1cf67837d58a1c236.jpg){.absolute top=300 left=700 width="40%"}
+
+
+:::{.notes}
+Les données sont partout, mais pas nécessairement compréhensible dans leur forme « raw ». L'analyse de données permet de simplifier ces données pour comprendre et expliquer des phénomènes ou des comportements dans le monde qui nous entoure.
+
+Pouvoir de prédiction: prédire comment certaines variables ou facteurs influencent d’autres variables ou événements. 
+:::
+
+
+## Qu'est-ce que l'analyse de données?{.smaller}
+
+> L'analyse de données vise à explorer, décrire et interpréter des informations recueillies sur les comportements humains, les relations sociales et les phénomènes sociétaux. **Ce processus peut inclure des données quantitatives (comme des données issus de sondages) et des données qualitatives (comme des entretiens ou des observations)**.
+
+::: {.incremental}
+Principales étapes de l'analyse de données :
+
+1. Collecte des données
+2. Préparation des données
+3. Analyse statistique
+:::
+
+## Les exercices de cet atelier{.smaller}
+
+- Analyse textuelle
+- PCA et clustering
+
+Voici quelques exemples de ce que vous pourrez faire avec R
+
+## 
+
+![](_SharedFolder_fss_introduction_r/img/ex/3_pred_rci_parties_position.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+## 
+
+![](_SharedFolder_fss_introduction_r/img/ex/cluster1.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+##
+
+![](_SharedFolder_fss_introduction_r/img/ex/cluster2.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+## 
+![](_SharedFolder_fss_introduction_r/img/ex/cluster3.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+##
+![](_SharedFolder_fss_introduction_r/img/ex/cluster4.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+##
+![](_SharedFolder_fss_introduction_r/img/ex/clustering_results2.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+##
+![](_SharedFolder_fss_introduction_r/img/ex/famille_classe_moyenne_elevee_white.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+##
+![](_SharedFolder_fss_introduction_r/img/ex/guns_by_county.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+##
+
+![](_SharedFolder_fss_introduction_r/img/ex/posterior_coefficients_artists.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+
+## Les outils utilisés dans cet atelier{.smaller}
+
+- R et RStudio
+- C'est quoi la différence entre R et RStudio?
+- R est le moteur, RStudio est l'interface
+- Quarto
+- GitHub
+
+<br><br>
+
+### À télécharger :
+
+- [Installer R](https://cran.r-project.org/)
+- [Installer RStudio](https://www.rstudio.com/products/rstudio/download/)
+
+
+
+## Concept important : Le chemin d'arborescence{.smaller}
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+- À tout moment vous devez savoir où vous êtes dans votre ordinateur pour pouvoir importer des données, exporter des graphiques ou mettre des fichiers en relation
+- Votre R est toujours ouvert dans un dossier, et donc vous devez savoir où il est pour pouvoir importer des données
+- La fonction `getwd()` dans R permet de savoir où vous êtes
+- Un fichier quarto se réfère toujours à lui même
+
+:::
+
+:::{.column width="50%"}
+![](https://9infotech.weebly.com/uploads/1/7/5/2/17521169/sample-file-path_orig.png){.absolute top=240 left=600 width="50%"}
+
+:::
+
+::::
+
+## Concept important : Planifier avant de coder{.smaller} 
+
+#### La plus grosse erreur est de commencer à coder sans savoir ce que vous voulez faire
+
+<br>
+
+- Clarifer vos objectifs: Qu'est-ce que vous voulez faire?
+  - Nettoyer des données?
+  - Faire un graphique?
+
+Les possibilités sont infinies, donc il est important de savoir où vous voulez aller
+
+
+## Concept important : Décomposer le problème{.smaller}
+
+- Une fois que vous savez ce que vous voulez faire, il est important de décomposer le problème en petites étapes
+- Un script R pour une seule tâche
+  - Bien nommer vos scripts pour savoir ce qu'ils font
+  - Exemples: 
+    - `nettoyage_donnees.R`
+    - `graphique.R`
+- Chaque script doit être clair et facile à comprendre
+- Commenter votre code avec des `#`
+
+## Bonnes pratiques
+
+- Nommer vos objets de façon explicite
+- Commenter votre code
+- Organiser votre code
+
+
+## Organiser votre répertoire et placer vos données{.smaller}
+
+```bash
+/MonProjet
+├── data/                
+│   ├── raw_data.csv      
+│   └── cleaned_data.csv  
+├── scripts/             
+│   ├── analyse.R         
+│   └── visualization.R   
+├── results/             
+│   ├── summary_statistics.csv  
+│   └── plots/                  
+│       └── data_distribution.png  
+├── docs/                
+│   ├── methodology.md    
+│   ├── references.bib    
+│   └── project_presentation.qmd  
+└── README.md            
+```
+
+## Apprendre plus de R{.smaller} 
+
+- swirl
+- Datacamp
+- R4DS (R for Data Science)
+- Advanced R
+
+
+## Ressources
+
+Quoi faire quand ça ne fonctionne pas?
+
+- ChatGPT / Claude
+- Réessayer ChatGPT / Claude
+- La documentation de R
+- Google
+
+## Conclusion
