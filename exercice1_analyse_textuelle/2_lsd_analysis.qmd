@@ -15,7 +15,7 @@ library(dplyr)
 library(quanteda)
 ```
 
-## Charger des mots vides personnalisés qui seront utilisés pour filtrer le texte
+## Charger des stopwords personnalisés qui seront utilisés pour filtrer le texte
 
 ```{r}
 source("../code/lsd_prep_sources/custom_stopwords.R")
@@ -57,7 +57,7 @@ tokens_text <- tokens_tolower(tokens_text)
 all_stopwords <- c(stopwords("english"), stopWords_en, keywords, after_job_en)
 ```
 
-## Supprimer les mots vides des tokens pour se concentrer sur les mots significatifs
+## Supprimer les stopwords des tokens pour se concentrer sur les mots significatifs
 
 ```{r}
 tokens_text <- tokens_remove(
@@ -78,7 +78,10 @@ dfm_text <- dfm(tokens_text)
 ## Appliquer le dictionnaire de sentiments à la matrice document-terme
 
 ```{r}
-sentiment <- dfm_lookup(dfm_text, dictionary = data_dictionary_LSD2015)
+sentiment <- dfm_lookup(
+  dfm_text,
+  dictionary = data_dictionary_LSD2015
+  )
 ```
 
 ## Calculer les scores de sentiments positifs
@@ -142,6 +145,7 @@ data$net_sentiment_scores_rescaled <- 2 * ((data$net_sentiment_scores - min_scor
 ## Faire un histogramme des scores de sentiment net
 
 ```{r}
+hist(data$tone_index)
 hist(data$net_sentiment_scores)
 hist(data$net_sentiment_scores_rescaled)
 ```

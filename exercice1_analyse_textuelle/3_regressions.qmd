@@ -26,8 +26,6 @@ data_reg <- readRDS("../data/exercice1/data_analyse_textuelle.rds")
 data <- data_reg %>%
   mutate(month = substr(date, 6, 7),  # Extraire le mois de la colonne date
          year = substr(date, 1, 4))  # Extraire l'année de la colonne date
-
-
 ```
 
 ## Convertir la source des articles en facteur et rééchelonner avec "The New York Times" comme référence
@@ -62,26 +60,41 @@ models <- list(
 )
 ```
 
-## Créer un tableau indiquant les effets fixes inclus dans chaque modèle
-
-```{r}
-fixed_effects <- tibble::tribble(
-  ~Term, ~Model1, ~Model2, ~Model3, ~Model4,
-  "Years Fixed Effect", "", "$\\checkmark$", "", "$\\checkmark$",
-  "Sources Fixed Effect", "", "", "$\\checkmark$", "$\\checkmark$"
-)
-```
-
-## Résumer les modèles et sauvegarder le tableau dans un fichier LaTeX
+## Résumer les modèles et sauvegarder le tableau dans un fichier html
 
 ```{r}
 modelsummary::modelsummary(models,
              output = "../data/exercice1/tableau_reg_main.html",  # Chemin du fichier de sortie
+             stars = TRUE,  # Afficher les étoiles pour les niveaux de significativité
+             gof_omit = 'DF|Deviance|AIC|BIC|Log|RMSE|R2',  # Omettre certaines mesures de qualité d'ajustement
+             coef_rename = c("countrySyria" = "Articles about Syria",  # Renommer les coefficients pour une meilleure compréhension
+                             "countryUkraine" = "Articles about Ukraine",
+                             "countryIraq" = "Articles about Iraq"),
+             add_rows = fixed_effects)  # Ajouter le tableau des effets fixes au résumé
+```
+
+Et si on veut enlever les effets des variables de contrôle comme l'année et de la source, on peut utiliser le code suivant :
+
+## Créer un tableau indiquant les effets inclus dans chaque modèle
+
+```{r}
+controls <- tibble::tribble(
+  ~Term, ~Model1, ~Model2, ~Model3, ~Model4,
+  "Years Fixed Effect", "", "Yes", "", "Yes",
+  "Sources Fixed Effect", "", "", "Yes", "Yes"
+)
+```
+
+## Résumer les modèles et sauvegarder le tableau dans un fichier html
+
+```{r}
+modelsummary::modelsummary(models,
+             output = "../data/exercice1/tableau_reg_no_controls.html",  # Chemin du fichier de sortie
              stars = TRUE,  # Afficher les étoiles pour les niveaux de significativité
              coef_omit = "year|source|Intercept",  # Omettre les coefficients pour l'année, la source et l'interception
              gof_omit = 'DF|Deviance|AIC|BIC|Log|RMSE|R2',  # Omettre certaines mesures de qualité d'ajustement
              coef_rename = c("countrySyria" = "Articles about Syria",  # Renommer les coefficients pour une meilleure compréhension
                              "countryUkraine" = "Articles about Ukraine",
                              "countryIraq" = "Articles about Iraq"),
-             add_rows = fixed_effects)  # Ajouter le tableau des effets fixes au résumé
+             add_rows = controls)  # Ajouter le tableau des effets fixes au résumé
 ```
