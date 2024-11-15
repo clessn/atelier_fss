@@ -1,13 +1,24 @@
-# Guide d'utilisation du projet d'analyse de sentiment et de régression
+# Guide d'utilisation de cet atelier
 
-Ce guide détaillé vous accompagne à travers les différentes étapes nécessaires à l'utilisation de ce projet GitHub, conçu pour l'analyse de sentiment et l'analyse de régression sur des données textuelles. Ce README est destiné aux débutants et explique chaque étape de manière exhaustive, depuis la préparation des données jusqu'à la visualisation des résultats. Prérequis
+Ce guide détaillé vous accompagne à travers les différentes étapes nécessaires à l'utilisation de ce projet GitHub, conçu pour deux exercices d'analyse de données en R. Ce README est destiné aux débutants et explique chaque étape de manière exhaustive, depuis la préparation des données jusqu'à la visualisation des résultats.
+
+## Table des matières
+- [Guide d'utilisation de cet atelier](#guide-dutilisation-de-cet-atelier)
+- [Prérequis](#prérequis)
+- [Téléchargement et Ouverture du Projet](#téléchargement-et-ouverture-du-projet)
+- [Structure du projet](#structure-du-projet)
+- [Exercices: Utilisation de Quarto](#exercices-utilisation-de-quarto)
+- [Difficultés? Problèmes?](#difficultés-problèmes)
+
+## Prérequis
 
 Avant de commencer, assurez-vous d'avoir les éléments suivants :
 
 - Une installation fonctionnelle de R et RStudio.
 
-- Les packages R suivants installés : `dplyr`, `tidytext`, `quanteda`, `ggplot2`, `modelsummary`, `factoextra`, `cluster.datasets`, `ggrepel` et `tidytext`. Vous pouvez les installer en exécutant les commandes suivantes dans RStudio :
-
+- Les packages R suivants installés : `dplyr`, `tidytext`, `quanteda`, `ggplot2`, `modelsummary`, `factoextra`, `cluster.datasets`, `ggrepel` et `tidytext`.
+  - Pour vérifier si un package est installé, exécutez `library(nom_du_package)`. Si une erreur apparaît, cela signifie que le package doit être installé.
+  - Vous pouvez les installer en exécutant les commandes suivantes dans RStudio :
 ``` r
     install.packages("dplyr")
     install.packages("tidytext")
@@ -20,9 +31,9 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants :
     install.packages("tidytext") ## Pour ordonner le texte sur les axes des graphiques
 ```
 
-- Installation de Quarto. Voici les instructions pour installer Quarto:
+- Installation de Quarto (outil pour créer des documents dynamiques; détails dans la section [Exercices: Utilisation de Quarto](#exercices-utilisation-de-quarto)). Voici les instructions pour installer Quarto:
   
-  1. Dans votre terminal, vérifiez si Quarto est installé en exécutant la commande suivante :
+  1. Dans un terminal, vérifiez si Quarto est installé en exécutant la commande suivante :
   ```bash
   quarto --version
   ```
@@ -69,7 +80,7 @@ Assurez-vous de maintenir cette structure pour le bon fonctionnement des scripts
 
 Pour nos deux exercices, nous utilisons **Quarto**, un outil open-source permettant de créer des documents dynamiques, des rapports et des présentations à partir de fichiers `.qmd` (Quarto Markdown). Quarto est particulièrement utile pour combiner du texte, du code et des visualisations dans un même document, facilitant ainsi le partage et la reproductibilité des analyses de données.
 
-Pour chaque exercice, vous pouvez ouvrir les fichiers `.qmd` et suivre les instructions. Les fichiers sont numérotés pour indiquer l'ordre dans lequel ils doivent être exécutés.
+Pour chaque exercice, vous pouvez ouvrir les fichiers `.qmd` et suivre les instructions. Les fichiers sont numérotés pour indiquer l'ordre dans lequel ils doivent être exécutés. En exécutant chaque fichier, vous obtiendrez un rapport contenant les analyses et visualisations correspondant à l'exercice.
 
 ## Difficultés? Problèmes?
 

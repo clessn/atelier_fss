@@ -352,15 +352,29 @@ display: none;
 </div>
 
 
-<div id="guide-dutilisation-du-projet-danalyse-de-sentiment-et-de-régression" class="section level1">
-<h1>Guide d’utilisation du projet d’analyse de sentiment et de
-régression</h1>
+<div id="guide-dutilisation-de-cet-atelier" class="section level1">
+<h1>Guide d’utilisation de cet atelier</h1>
 <p>Ce guide détaillé vous accompagne à travers les différentes étapes
-nécessaires à l’utilisation de ce projet GitHub, conçu pour l’analyse de
-sentiment et l’analyse de régression sur des données textuelles. Ce
-README est destiné aux débutants et explique chaque étape de manière
-exhaustive, depuis la préparation des données jusqu’à la visualisation
-des résultats. Prérequis</p>
+nécessaires à l’utilisation de ce projet GitHub, conçu pour deux
+exercices d’analyse de données en R. Ce README est destiné aux débutants
+et explique chaque étape de manière exhaustive, depuis la préparation
+des données jusqu’à la visualisation des résultats.</p>
+<div id="table-des-matières" class="section level2">
+<h2>Table des matières</h2>
+<ul>
+<li><a href="#guide-dutilisation-de-cet-atelier">Guide d’utilisation de
+cet atelier</a></li>
+<li><a href="#prérequis">Prérequis</a></li>
+<li><a href="#téléchargement-et-ouverture-du-projet">Téléchargement et
+Ouverture du Projet</a></li>
+<li><a href="#structure-du-projet">Structure du projet</a></li>
+<li><a href="#exercices-utilisation-de-quarto">Exercices: Utilisation de
+Quarto</a></li>
+<li><a href="#difficultés-problèmes">Difficultés? Problèmes?</a></li>
+</ul>
+</div>
+<div id="prérequis" class="section level2">
+<h2>Prérequis</h2>
 <p>Avant de commencer, assurez-vous d’avoir les éléments suivants :</p>
 <ul>
 <li><p>Une installation fonctionnelle de R et RStudio.</p></li>
@@ -368,23 +382,27 @@ des résultats. Prérequis</p>
 <code>tidytext</code>, <code>quanteda</code>, <code>ggplot2</code>,
 <code>modelsummary</code>, <code>factoextra</code>,
 <code>cluster.datasets</code>, <code>ggrepel</code> et
-<code>tidytext</code>. Vous pouvez les installer en exécutant les
-commandes suivantes dans RStudio :</p></li>
-</ul>
-<pre class="r"><code>    install.packages(&quot;dplyr&quot;)
-    install.packages(&quot;tidytext&quot;)
-    install.packages(&quot;quanteda&quot;)
-    install.packages(&quot;ggplot2&quot;)
-    install.packages(&quot;modelsummary&quot;)
-    install.packages(&quot;factoextra&quot;)
-    install.packages(&quot;cluster.datasets&quot;) ## Ce package contient des jeux de données pertinents pour faire du clustering
-    install.packages(&quot;ggrepel&quot;) ## Pour gérer les labels qui se chevauchent dans les graphiques
-    install.packages(&quot;tidytext&quot;) ## Pour ordonner le texte sur les axes des graphiques</code></pre>
+<code>tidytext</code>.</p>
 <ul>
-<li><p>Installation de Quarto. Voici les instructions pour installer
-Quarto:</p>
+<li>Pour vérifier qu’un package est installé, exécutez
+<code>library(nom_du_package)</code></li>
+<li>Vous pouvez les installer en exécutant les commandes suivantes dans
+RStudio :</li>
+</ul>
+<pre class="r"><code>  install.packages(&quot;dplyr&quot;)
+  install.packages(&quot;tidytext&quot;)
+  install.packages(&quot;quanteda&quot;)
+  install.packages(&quot;ggplot2&quot;)
+  install.packages(&quot;modelsummary&quot;)
+  install.packages(&quot;factoextra&quot;)
+  install.packages(&quot;cluster.datasets&quot;) ## Ce package contient des jeux de données pertinents pour faire du clustering
+  install.packages(&quot;ggrepel&quot;) ## Pour gérer les labels qui se chevauchent dans les graphiques
+  install.packages(&quot;tidytext&quot;) ## Pour ordonner le texte sur les axes des graphiques</code></pre></li>
+<li><p>Installation de Quarto (outil pour créer des documents
+dynamiques; détails dans la section <a href="#exercices-utilisation-de-quarto">Exercices: Utilisation de
+Quarto</a>). Voici les instructions pour installer Quarto:</p>
 <ol style="list-style-type: decimal">
-<li>Dans votre terminal, vérifiez si Quarto est installé en exécutant la
+<li>Dans un terminal, vérifiez si Quarto est installé en exécutant la
 commande suivante :</li>
 </ol>
 <pre class="bash"><code>quarto --version</code></pre>
@@ -393,6 +411,7 @@ commande suivante :</li>
 pour télécharger et installer l’outil.</li>
 </ol></li>
 </ul>
+</div>
 <div id="téléchargement-et-ouverture-du-projet" class="section level2">
 <h2>Téléchargement et Ouverture du Projet</h2>
 <p>Pour télécharger et commencer à travailler sur ce projet dans
@@ -459,7 +478,9 @@ rapports et des présentations à partir de fichiers <code>.qmd</code>
 texte, du code et des visualisations dans un même document, facilitant
 ainsi le partage et la reproductibilité des analyses de données.</p>
 <p>Pour chaque exercice, vous pouvez ouvrir les fichiers
-<code>.qmd</code> et suivre les instructions. Les fichiers sont</p>
+<code>.qmd</code> et suivre les instructions. Les fichiers sont
+numérotés pour indiquer l’ordre dans lequel ils doivent être
+exécutés.</p>
 </div>
 <div id="difficultés-problèmes" class="section level2">
 <h2>Difficultés? Problèmes?</h2>
