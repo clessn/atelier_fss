@@ -6,7 +6,7 @@ institute: Université Laval
 format:
   revealjs:
     mermaid: 
-      theme: dark
+       theme: dark
     theme: simple
     logo: _SharedFolder_fss_introduction_r/img/logo_CLESSN.png
     footer: "Analyse de données avec R"
@@ -22,7 +22,6 @@ format:
 
 ### 9h à 12h 
 - Qui suis-je?
-- Êtes-vous quali ou quanti?
 - R et RStudio
 - Analyse textuelle
 - PCA et clustering
@@ -38,49 +37,10 @@ format:
 - Membre du Centre d'analyse des politiques publiques (CAPP)
 - Membre du Groupe de recherche en communication politique (GRCP)
 - Membre du Centre d'étude sur la citoyenneté démocratique (CECD)
-- Fondateur et PDG d'O'publiq
 
 ## La CLESSN{.smaller auto-animate=true}
 
-![](https://www.clessn.com/assets/img/logo-black.svg){.absolute top=330 left=630 width="30%"}
-![](_SharedFolder_fss_introduction_r/img/yaduf.png){.absolute top=750 left=0 width="35%"}
-Chaire de leadership en enseignement des sciences sociales numériques (CLESSN)
-
-
-::::{.columns}
-
-:::{.column width="50%"}
-- Titulaire: Yannick Dufresne
-:::
-
-:::{.column width="50%"}
-- Objectif: Développer des compétences en science des données pour les étudiants en sciences sociales à travers des projets de recherche et des formations
-:::
-
-::::
-
-## La CLESSN{.smaller auto-animate=true}
-
-![](https://www.clessn.com/assets/img/logo-black.svg){.absolute top=330 left=630 width="30%"}
-![](_SharedFolder_fss_introduction_r/img/yaduf.png){.absolute top=530 left=0 width="35%"}
-Chaire de leadership en enseignement des sciences sociales numériques (CLESSN)
-
-
-::::{.columns}
-
-:::{.column width="50%"}
-- Titulaire: Yannick Dufresne
-:::
-
-:::{.column width="50%"}
-- Objectif: Développer des compétences en science des données pour les étudiants en sciences sociales à travers des projets de recherche et des formations
-:::
-
-::::
-
-## La CLESSN{.smaller auto-animate=true}
-
-![](https://www.clessn.com/assets/img/logo-black.svg){.absolute top=330 left=630 width="30%"}
+![](_SharedFolder_fss_introduction_r/img/logo_CLESSN.png){.absolute top=330 left=630 width="30%"}
 ![](_SharedFolder_fss_introduction_r/img/yaduf.png){.absolute top=200 left=0 width="35%"}
 Chaire de leadership en enseignement des sciences sociales numériques (CLESSN)
 
@@ -161,13 +121,11 @@ Voici quelques exemples de ce que vous pourrez faire avec R
 
 ![](_SharedFolder_fss_introduction_r/img/ex/3_pred_rci_parties_position.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
 
-## 
-
-![](_SharedFolder_fss_introduction_r/img/ex/cluster1.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
 
 ##
 
-![](_SharedFolder_fss_introduction_r/img/ex/cluster2.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
+![](_SharedFolder_fss_introduction_r/img/ex/clustering_results2.png){.absolute left=0 right=0 bottom=0 top=0 height="80%" style="z-index: -1.15; margin: auto auto;"}
+
 
 ## 
 ![](_SharedFolder_fss_introduction_r/img/ex/cluster3.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
@@ -175,8 +133,6 @@ Voici quelques exemples de ce que vous pourrez faire avec R
 ##
 ![](_SharedFolder_fss_introduction_r/img/ex/cluster4.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
 
-##
-![](_SharedFolder_fss_introduction_r/img/ex/clustering_results2.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
 
 ##
 ![](_SharedFolder_fss_introduction_r/img/ex/famille_classe_moyenne_elevee_white.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
@@ -198,13 +154,6 @@ Voici quelques exemples de ce que vous pourrez faire avec R
 
 <br><br>
 
-### À télécharger :
-
-- [Installer R](https://cran.r-project.org/)
-- [Installer RStudio](https://www.rstudio.com/products/rstudio/download/)
-
-
-
 ## Concept important : Le chemin d'arborescence{.smaller}
 
 ::::{.columns}
@@ -219,7 +168,7 @@ Voici quelques exemples de ce que vous pourrez faire avec R
 :::
 
 :::{.column width="50%"}
-![](https://9infotech.weebly.com/uploads/1/7/5/2/17521169/sample-file-path_orig.png){.absolute top=240 left=600 width="50%"}
+![](_SharedFolder_fss_introduction_r/img/sample-file-path_orig.png){.absolute top=240 left=600 width="50%"}
 
 :::
 
@@ -289,9 +238,11 @@ Les possibilités sont infinies, donc il est important de savoir où vous voulez
 
 Quoi faire quand ça ne fonctionne pas?
 
+- Google (Stack Overflow)
 - ChatGPT / Claude
 - Réessayer ChatGPT / Claude
 - La documentation de R
-- Google
 
-## Conclusion
+## Codons!
+
+![](_SharedFolder_fss_introduction_r/img/qr_code.png){.absolute left=0 right=0 bottom=0 top=0 height="90%" style="margin: auto auto;"}
