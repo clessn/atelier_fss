@@ -277,6 +277,3 @@ Le clustering est un outil puissant en sciences sociales, car il permet de regro
 Une fois les clusters identifiés, ils peuvent être utilisés pour approfondir les analyses : par exemple, on peut étudier les caractéristiques spécifiques de chaque groupe, explorer les facteurs qui influencent leur formation, ou encore prédire des comportements futurs.
 
 Dans cet exemple, nous avons utilisé un jeu de données très rudimentaire de 16 observations à des fins de formation. Mais sachez que le clustering k-means fonctionne très bien sur des plus gros jeux de données!
-
-# BONUS: faire une carte des clusters
-
